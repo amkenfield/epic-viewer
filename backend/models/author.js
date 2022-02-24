@@ -3,11 +3,11 @@
 const db = require('../db');
 const {BadRequestError, NotFoundError} = require('../expressError');
 const {sqlForPartialUpdate} = require('../helpers/sql');
+const { testAuthorIds } = require('./_testCommon');
 
 class Author {
   
   // Routes Needed:
-  // update (not needed til DevTools)
   // remove (DevTools)
 
   /** Create an author (from data), update db, return new author data.
@@ -162,6 +162,23 @@ class Author {
     if(!author) throw new NotFoundError(`No such author exists with id: ${id}`);
 
     return author;
+  }
+
+  /** Delete given author from database; returns undefined.
+   * 
+   * Throws NotFoundError if author not found.
+   */
+
+  static async remove(id) {
+    const result = await db.query(
+          `DELETE
+           FROM authors
+           WHERE id = ${id}
+           RETURNING id`);
+    console.log("result: ", result)
+    const author = result.rows[0];
+
+    if(!author) throw new NotFoundError(`No such author with id: ${id}`);
   }
 }
 

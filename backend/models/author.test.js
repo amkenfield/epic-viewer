@@ -197,3 +197,17 @@ describe("update", function() {
     }
   });
 });
+
+// /************************************** remove */
+
+// describe("remove", function() {
+//   test("works", async function() {
+//     console.log("testworkids: ", testWorkIds)
+//     const testRes = await Author.get(testWorkIds[0]);
+//     console.log("testres: ", testRes);
+//     await Author.remove(testWorkIds[0]);
+//     const result = await db.query(
+//           `SELECT short_name FROM authors WHERE id=${testAuthorIds[0]}`);
+//     expect(result.rows.length).toEqual(0);
+//   });
+});
