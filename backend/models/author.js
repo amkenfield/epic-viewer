@@ -7,8 +7,6 @@ const {sqlForPartialUpdate} = require('../helpers/sql');
 class Author {
   
   // Routes Needed:
-  // create (though not needed until DevTools developed)
-  // findAll - in process below
   // get - in process below
   // update (not needed til DevTools)
   // remove (DevTools)
@@ -38,7 +36,7 @@ class Author {
           `INSERT INTO authors
            (short_name, full_name)
            VALUES ($1, $2)
-           RETURNING short_name AS shortName, full_name AS fullName`,
+           RETURNING short_name AS "shortName", full_name AS "fullName", id`,
           [
             shortName,
             fullName
@@ -49,7 +47,7 @@ class Author {
     return author;
   }
 
-  /** Find all authors (optional filter of shortName)
+  /** Find all authors (optional filter of shortName -- will expand searchFilters in future development)
    * 
    *  searchFilter of shortName will find case-insensitive, partial matches
    * 
@@ -71,18 +69,36 @@ class Author {
       whereExpressions.push(`short_name ILIKE $${queryValues.length}`);
     }
 
-    query += " ORDER BY name";
+    // the below is not strictly needed at this point,
+    // but is included to allow for further expansion of search capabilities,
+    // such as by language(?), dates florit, etc.
+    if(whereExpressions.length > 0){
+      query += " WHERE " + whereExpressions.join(" AND ");
+    }
+
+    query += " ORDER BY short_name";
     const authorsRes = await db.query(query, queryValues);
     return authorsRes.rows;
   }
 
   /** Given an id, return data about author
    * 
-   *  Returns {id, shortName, fullName, authors}
-   *    where authors is [{id, shortTitle, fullTitle, langCode}, ...]
+   *  Returns {id, shortName, fullName, works }
+   *      where works is [{id, shortTitle, fullTitle, langCode}, ...]
+   *  NFS - data to be expanded further along;
+   *  see findAll comments for more
    * 
    *  Throws NotFoundError if not found.
    **/
+
+// The question though - is this method really necessary,
+// given that the above findAll essentially operates
+// as though an authors' shortName is a unique identifier?
+// 
+// Will flesh out & preserve the below for now, but something to ponder
+// 
+// Having done a bit more (re)exploring, the key difference is that
+// this method provides the works associated with said author
 
   static async get(id) {
     const authorRes = await db.query(

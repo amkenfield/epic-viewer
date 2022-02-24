@@ -2,29 +2,36 @@ const bcrypt = require("bcrypt");
 const db = require("../db.js");
 const { BCRYPT_WORK_FACTOR } = require("../config");
 
+const testAuthorIds = [];
 const testWorkIds = [];
 
 async function commonBeforeAll() {
   await db.query("DELETE FROM users");
   await db.query("DELETE FROM authors");
+  // keep the below for now, b/c atm works don't delete on cascade;
+  // if that changes, this will need to as well
+  await db.query("DELETE FROM works");
+  await db.query("DELETE FROM languages");
 
-  // Keeping the below to remind of paradigm/etc for authors/works/(etc)
-  // *************************
-  // await db.query("DELETE FROM companies");
-  // await db.query(`
-  //   INSERT INTO companies(handle, name, num_employees, description, logo_url)
-  //   VALUES ('c1', 'C1', 1, 'Desc1', 'http://c1.img'),
-  //          ('c2', 'C2', 2, 'Desc2', 'http://c2.img'),
-  //          ('c3', 'C3', 3, 'Desc3', 'http://c3.img')`);
+  const resultsAuthors = await db.query(`
+    INSERT INTO authors (short_name, full_name)
+    VALUES ('Mendax', 'Publius Flavius Mendax'),
+           ('Pullo', 'Titus Pullo'),
+           ('Tully', 'Marcus Tullius Cicero')`);
+  testAuthorIds.splice(0, 0, ...resultsAuthors.rows.map(a => a.id));
 
-  // const resultsJobs = await db.query(`
-  //   INSERT INTO jobs (title, salary, equity, company_handle)
-  //   VALUES ('Job1', 100, '0.1', 'c1'),
-  //          ('Job2', 200, '0.2', 'c1'),
-  //          ('Job3', 300, '0', 'c1'),
-  //          ('Job4', NULL, NULL, 'c1')
-  //   RETURNING id`);
-  // testJobIds.splice(0, 0, ...resultsJobs.rows.map(r => r.id));
+  await db.query(`
+    INSERT INTO languages (name, lang_code)
+    VALUES ('Latin', 'LAT')`);
+
+  const resultsWorks = await db.query(`
+    INSERT INTO works (short_title, full_title, author_id, lang_code)
+    VALUES ('Primum', 'Opus Primum De Anima', $1, 'LAT'),
+           ('Secundum', 'Opus Secundum De Corpore', $1, 'LAT'),
+           ('Tertium', 'Opus Tertium De Otio', $2, 'LAT')
+    RETURNING id`,
+    [testAuthorIds[0], testAuthorIds[1]]);
+  testWorkIds.splice(0,0, ...resultsWorks.rows.map(w => w.id));
 
   await db.query(`
         INSERT INTO users(username,
@@ -59,5 +66,6 @@ module.exports = {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
+  testAuthorIds,
   testWorkIds
 };
