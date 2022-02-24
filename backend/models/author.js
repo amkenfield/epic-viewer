@@ -7,7 +7,6 @@ const {sqlForPartialUpdate} = require('../helpers/sql');
 class Author {
   
   // Routes Needed:
-  // get - in process below
   // update (not needed til DevTools)
   // remove (DevTools)
 
@@ -126,6 +125,41 @@ class Author {
     );
 
     author.works = worksRes.rows;
+
+    return author;
+  }
+
+  /** Update author data with `data`.
+   * 
+   * This is a partial update - data may not contain all fields;
+   * this will only change provided ones
+   * 
+   * Data can include: {shortName, fullName}
+   * 
+   * Returns {id, shortName, fullName}
+   * 
+   * Throws NotFoundError if not found.
+   */
+
+  static async update(id, data) {
+    const {setCols, values} = sqlForPartialUpdate(
+      data,
+      {
+        shortName: "short_name",
+        fullName: "full_name"
+      });
+    const idVarIdx = "$" + (values.length + 1);
+
+    const querySql = `UPDATE authors
+                      SET ${setCols}
+                      WHERE id = ${idVarIdx}
+                      RETURNING id,
+                                short_name AS "shortName",
+                                full_name AS "fullName"`;
+    const result = await db.query(querySql, [...values, id]);
+    const author = result.rows[0];
+
+    if(!author) throw new NotFoundError(`No such author exists with id: ${id}`);
 
     return author;
   }

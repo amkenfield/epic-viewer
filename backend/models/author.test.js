@@ -109,9 +109,7 @@ describe("findAll", function(){
 
 describe("get", function() {
   test("works", async function() {
-    console.log(testAuthorIds);
     let author = await Author.get(testAuthorIds[0])
-    console.log(author);
     expect(author).toEqual({
       shortName: "Mendax",
       fullName: "Publius Flavius Mendax",
@@ -130,5 +128,72 @@ describe("get", function() {
     } catch(e) {
       expect(e instanceof NotFoundError).toBeTruthy();
     }
-  })
-})
+  });
+});
+
+/************************************** update */
+
+describe("update", function() {
+  const updateData = {
+    shortName: "Caecus",
+    fullName: "Gaius Claudius Caecus"
+  };
+  const partialUpdateData = {
+    shortName: "Biggus"
+  };
+
+  test("works", async function() {
+    let author = await Author.update(testAuthorIds[0], updateData);
+    expect(author).toEqual({
+      id: testAuthorIds[0],
+      ...updateData
+    });
+
+    const result = await db.query(
+          `SELECT id, short_name, full_name
+           FROM authors
+           WHERE id = ${testAuthorIds[0]}`);
+    expect(result.rows).toEqual([{
+      id: testAuthorIds[0],
+      short_name: "Caecus",
+      full_name: "Gaius Claudius Caecus"
+    }]);
+  });
+
+  test("works: partial update", async function() {
+    let author = await Author.update(testAuthorIds[0], partialUpdateData);
+    expect(author).toEqual({
+      id: testAuthorIds[0],
+      fullName: "Publius Flavius Mendax",
+      ...partialUpdateData
+    });
+
+    const result = await db.query(
+      `SELECT id, short_name, full_name
+       FROM authors
+       WHERE id = ${testAuthorIds[0]}`);
+       expect(result.rows).toEqual([{
+        id: testAuthorIds[0],
+        short_name: "Biggus",
+        full_name: "Publius Flavius Mendax"
+    }]);
+  });
+
+  test("not found if no such author", async function() {
+    try {
+      await Author.update(-1, updateData);
+      fail();
+    } catch(e) {
+      expect(e instanceof NotFoundError).toBeTruthy();
+    }
+  });
+
+  test("bad request with no data", async function() {
+    try {
+      await Author.update(testAuthorIds[0], {});
+      fail();
+    } catch(e) {
+      expect(e instanceof BadRequestError).toBeTruthy();
+    }
+  });
+});
