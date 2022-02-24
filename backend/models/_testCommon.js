@@ -6,18 +6,22 @@ const testAuthorIds = [];
 const testWorkIds = [];
 
 async function commonBeforeAll() {
-  await db.query("DELETE FROM users");
-  await db.query("DELETE FROM authors");
-  // keep the below for now, b/c atm works don't delete on cascade;
-  // if that changes, this will need to as well
   await db.query("DELETE FROM works");
   await db.query("DELETE FROM languages");
+  await db.query("DELETE FROM authors");
+  await db.query("DELETE FROM users");
+
+  // keep the below for now, b/c atm works don't delete on cascade;
+  // if that changes, this will need to as well
+
+
 
   const resultsAuthors = await db.query(`
     INSERT INTO authors (short_name, full_name)
     VALUES ('Mendax', 'Publius Flavius Mendax'),
            ('Pullo', 'Titus Pullo'),
-           ('Tully', 'Marcus Tullius Cicero')`);
+           ('Tully', 'Marcus Tullius Cicero')
+    RETURNING id`);
   testAuthorIds.splice(0, 0, ...resultsAuthors.rows.map(a => a.id));
 
   await db.query(`

@@ -117,10 +117,11 @@ class Author {
       `SELECT id,
               short_title AS "shortTitle",
               full_title AS "fullTitle",
-              lang_code AS "langCode"
+              lang_code AS "langCode",
+              author_id AS "authorId"
        FROM works
        WHERE author_id = $1
-       ORDER BY shortTitle`,
+       ORDER BY "shortTitle"`,
        [id]
     );
 
