@@ -68,3 +68,97 @@ describe("POST /authors", function() {
     expect(resp.statusCode).toEqual(400);
   });
 });
+
+/************************************** GET /authors */
+
+describe("GET /authors", function() {
+  test("ok for anon", async function() {
+    const resp = await request(app).get("/authors");
+    expect(resp.body).toEqual({
+      authors:
+        [
+          {
+            shortName: "Mendax",
+            fullName: "Publius Flavius Mendax",
+            id: expect.any(Number)
+          },
+          {
+            shortName: "Pullo",
+            fullName: "Titus Pullo",
+            id: expect.any(Number)
+          },
+          {
+            shortName: "Tully",
+            fullName: "Marcus Tullius Cicero",
+            id: expect.any(Number)
+          }
+        ]
+    });
+  });
+
+  test("works: filtering (single result)", async function() {
+    const resp = await request(app)
+          .get("/authors")
+          .query({shortName: "Mendax"});
+    expect(resp.body).toEqual({
+      authors: [
+        {
+          shortName: "Mendax",
+          fullName: "Publius Flavius Mendax",
+          id: expect.any(Number)
+        }
+      ]
+    });
+  });
+
+  test("works: filtering (multiple results)", async function() {
+    const resp = await request(app)
+          .get("/authors")
+          .query({shortName: "ull"});
+    expect(resp.body).toEqual({
+      authors: [
+        {
+          shortName: "Pullo",
+          fullName: "Titus Pullo",
+          id: expect.any(Number)
+        },
+        {
+          shortName: "Tully",
+          fullName: "Marcus Tullius Cicero",
+          id: expect.any(Number)
+        }
+      ]
+    });
+  });
+
+  test("bad request if invalid filter key", async function() {
+    const resp = await request(app)
+          .get("/authors")
+          .query({favColor: "Tyrian purple"});
+    expect(resp.statusCode).toEqual(400);
+  });
+});
+
+/************************************** GET /authors/:id */
+
+describe("GET /authors/:id", function() {
+  test("works for anon", async function() {
+    const resp = await request(app).get(`/authors/${testAuthorIds[0]}`);
+    expect(resp.body).toEqual({
+      author: {
+        shortName: "Mendax",
+        fullName: "Publius Flavius Mendax",
+        id: expect.any(Number),
+        // NTS - works will be empty for now; will needs add once Works full implementation complete
+        works: []
+      }
+    });
+  });
+
+  // test("works for anon: author w/o works") -- TO WRITE, SEE ABOVE
+
+  test("not found for no such author", async function() {
+    const resp = await request(app).get('/authors/0');
+    expect(resp.statusCode).toEqual(404);
+  });
+});
