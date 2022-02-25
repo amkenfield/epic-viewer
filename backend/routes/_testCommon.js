@@ -2,36 +2,25 @@
 
 const db = require("../db.js");
 const User = require("../models/user");
-
+const Author = require("../models/author");
 const { createToken } = require("../helpers/tokens");
 
+const testAuthorIds = [];
+
 async function commonBeforeAll() {
+  await db.query("DELETE FROM works");
+  await db.query("DELETE FROM authors");
   await db.query("DELETE FROM users");
 
-  // await Company.create(
-  //     {
-  //       handle: "c1",
-  //       name: "C1",
-  //       numEmployees: 1,
-  //       description: "Desc1",
-  //       logoUrl: "http://c1.img",
-  //     });
-  // await Company.create(
-  //     {
-  //       handle: "c2",
-  //       name: "C2",
-  //       numEmployees: 2,
-  //       description: "Desc2",
-  //       logoUrl: "http://c2.img",
-  //     });
-  // await Company.create(
-  //     {
-  //       handle: "c3",
-  //       name: "C3",
-  //       numEmployees: 3,
-  //       description: "Desc3",
-  //       logoUrl: "http://c3.img",
-  //     });
+  testAuthorIds[0] = (await Author.create(
+    {shortName: "Mendax", fullName: "Publius Flavius Mendax"})).id;
+  testAuthorIds[1] = (await Author.create(
+    {shortName: "Pullo", fullName: "Titus Pullo"})).id;
+  testAuthorIds[2] = (await Author.create(
+    {shortName: "Tully", fullName: "Marcus Tullius Cicero"})).id;
+
+  // Still need to create test jobs (and lines...),
+  // but will wait until after authors routes are successfully tested
 
   await User.register({
     username: "u1",
@@ -85,4 +74,5 @@ module.exports = {
   u1Token,
   u2Token,
   adminToken,
+  testAuthorIds
 };
