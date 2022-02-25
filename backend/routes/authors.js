@@ -89,4 +89,48 @@ router.get("/:id", async function(req, res, next) {
   }
 });
 
+/** PATCH /[id] { fld1, fld2 } => { author }
+ * 
+ * Patches author data.
+ * 
+ * fields can be (for now - expansion anticipated) : { shortName, fullName }
+ * 
+ * Returns { id, shortName, fullName }
+ * 
+ * Authorization required: admin
+ */
+
+router.patch("/:id", ensureAdmin, async function(req, res, next) {
+  try {
+    const validator = jsonschema.validate(req.body, authorUpdateSchema);
+    if(!validator.valid) {
+      const errs = validator.errors.map(e => e.stack);
+      throw new BadRequestError(errs);
+    }
+
+    const author = await Author.update(req.params.id, req.body);
+    return res.json({author});
+  } catch(e) {
+    return next(e);
+  }
+});
+
+/** DELETE /[id] => { deleted: id}
+ *
+ * Authorization required: admin
+ * 
+ * NB - not yet functional d/t Author.remove lacking functionality;
+ *      will write out now for sake of CRUD completion,
+ *      but something definitely to come back to 
+ */
+
+// router.delete("/:id", ensureAdmin, async function(req, res, next) {
+//   try {
+//     await Author.remove(req.params.id);
+//     return res.json({ deleted: req.params.id});
+//   } catch(e) {
+//     return next(e);
+//   }
+// });
+
 module.exports = router;

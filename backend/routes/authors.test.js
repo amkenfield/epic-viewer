@@ -162,3 +162,103 @@ describe("GET /authors/:id", function() {
     expect(resp.statusCode).toEqual(404);
   });
 });
+
+/************************************** PATCH /companies/:handle */
+
+describe("PATCH /authors/:id", function() {
+  test("works for admin", async function() {
+    const resp = await request(app)
+          .patch(`/authors/${testAuthorIds[0]}`)
+          .send({
+            shortName: "Biggus"
+          })
+          .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.body).toEqual({
+      author: {
+        shortName: "Biggus",
+        fullName: "Publius Flavius Mendax",
+        id: expect.any(Number)
+      }
+    });
+  });
+
+  test("unauth for non-admin", async function() {
+    const resp = await request(app)
+          .patch(`/authors/${testAuthorIds[0]}`)
+          .send({
+            shortName: "Biggus"
+          })
+          .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(401);
+  });
+
+  test("unauth for anon", async function() {
+    const resp = await request(app)
+          .patch(`/authors/${testAuthorIds[0]}`)
+          .send({
+            shortName: "Biggus"
+          });
+    expect(resp.statusCode).toEqual(401);
+  });
+
+  test("not found on no such author", async function() {
+    const resp = await request(app)
+          .patch(`/authors/${-1}`)
+          .send({
+            shortName: "Biggus"
+          })
+          .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.statusCode).toEqual(404);
+  });
+
+  test("bad request on id change attempt", async function() {
+    const resp = await request(app)
+          .patch(`/authors/${testAuthorIds[0]}`)
+          .send({
+            id: 12345
+          })
+          .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.statusCode).toEqual(400);
+  });
+
+  test("bad request on invalid data", async function() {
+    const resp = await request(app)
+          .patch(`/authors/${testAuthorIds[0]}`)
+          .send({
+            shortName: 12345
+          })
+          .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.statusCode).toEqual(400);
+  });
+});
+
+/************************************** DELETE /authors/:id */
+
+// describe("DELETE /authors/:id", function() {
+//   test("works for admin", async function() {
+//     const resp = await request(app)
+//           .delete(`/authors/${testAuthorIds[0]}`)
+//           .set("authorization", `Bearer ${adminToken}`);
+//     expect(resp.body).toEqual({deleted: expect.any(Number)})
+//   });
+
+//   test("unauth for non-admin", async function() {
+//     const resp = await request(app)
+//           .delete(`/authors/${testAuthorIds[0]}`)
+//           .set("authorization", `Bearer ${u1Token}`);
+//     expect(resp.status).toEqual(401);
+//   });
+
+//   test("unauth for anon", async function() {
+//     const resp = await request(app)
+//           .delete(`/authors/${testAuthorIds[0]}`);
+//     expect(resp.statusCode).toEqual(401);
+//   });
+
+//   test("not found for no such author", async function() {
+//     const resp = await request(app)
+//           .delete(`/authors/${-1}`)
+//           .set("authorization", `Bearer ${adminToken}`);
+//     expect(resp.statusCode).toEqual(404);
+//   });
+// });
