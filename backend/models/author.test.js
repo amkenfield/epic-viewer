@@ -27,9 +27,6 @@ describe("create", function() {
 
   test("works", async function(){
     let author = await Author.create(newAuthor);
-    // the below are left for archival sake;
-    // was trying to determine where the difference in the two was coming from --
-    // needed to remind self that PSQL automatically lowercases all table names if not quoted!
     expect(author).toEqual({
       shortName: 'Novus',
       fullName: 'Auctor Novus Magnus',
@@ -200,6 +197,9 @@ describe("update", function() {
 
 // /************************************** remove */
 
+// see note in model file - remove method not currently functional,
+// will set aside for time being
+
 // describe("remove", function() {
 //   test("works", async function() {
 //     console.log("testworkids: ", testWorkIds)
@@ -210,4 +210,4 @@ describe("update", function() {
 //           `SELECT short_name FROM authors WHERE id=${testAuthorIds[0]}`);
 //     expect(result.rows.length).toEqual(0);
 //   });
-});
+// });

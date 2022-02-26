@@ -169,17 +169,21 @@ class Author {
    * Throws NotFoundError if author not found.
    */
 
-  static async remove(id) {
-    const result = await db.query(
-          `DELETE
-           FROM authors
-           WHERE id = ${id}
-           RETURNING id`);
-    console.log("result: ", result)
-    const author = result.rows[0];
+  // The below is not functional as currently written;
+  // b/c delete functionality not needed for initial iteration
+  // of app (only for DevTools/etc), will pass over for now.
 
-    if(!author) throw new NotFoundError(`No such author with id: ${id}`);
-  }
+  // static async remove(id) {
+  //   const result = await db.query(
+  //         `DELETE
+  //          FROM authors
+  //          WHERE id = ${id}
+  //          RETURNING id`);
+  //   console.log("result: ", result)
+  //   const author = result.rows[0];
+
+  //   if(!author) throw new NotFoundError(`No such author with id: ${id}`);
+  // }
 }
 
 module.exports = Author;
