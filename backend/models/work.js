@@ -43,17 +43,54 @@ class Work {
     return work;
   }
   
-  // // To implement now:
-  // static async get(id, searchFilters = {}) {
-  //   // check in the console to make sure that this query is written correctly - the joins, specifically
-  //   const workRes = await db.query(
-  //     `SELECT w.id,
-  //             w.short_title AS "shortTitle",
-  //             w.full_title AS "fullTitle",
-  //             w.loang
-  //             `
-  //   )
-  // }
+  /** Find all works (optional filter on searchFilters).
+   * 
+   * searchFilters (all optional):
+   * - shortTitle
+   * - fullTitle (?)
+   * - langCode
+   * - authorId
+   * 
+   * Returns [{id, shortTitle, fullTitle, langCode, authorId}, ...]
+   */
+
+  static async findAll(searchFilters = {}) {
+    let query = `SELECT id,
+                        short_title AS "shortTitle",
+                        full_title AS "fullTitle",
+                        lang_code AS "langCode",
+                        author_id AS "authorId"
+                 FROM works`;
+    let whereExpressions = [];
+    let queryValues = [];
+
+    const {shortTitle, fullTitle, langCode, authorId} = searchFilters;
+
+    if(shortTitle !== undefined){
+      queryValues.push(`%${shortTitle}%`);
+      whereExpressions.push(`short_title ILIKE $${queryValues.length}`);
+    }
+    if(fullTitle !== undefined){
+      queryValues.push(`%${fullTitle}%`);
+      whereExpressions.push(`full_title ILIKE $${queryValues.length}`);
+    }
+    if(langCode !== undefined){
+      queryValues.push(langCode);
+      whereExpressions.push(`lang_code ILIKE $${queryValues.length}`);
+    }
+    if(authorId !== undefined){
+      queryValues.push(authorId);
+      whereExpressions.push(`author_id = $${queryValues.length}`);
+    }
+    
+    if(whereExpressions.length > 0){
+      query += " WHERE " + whereExpressions.join(" AND ");
+    }
+
+    query += " ORDER BY author_id, short_title"
+    const worksRes = await db.query(query, queryValues);
+    return worksRes.rows;
+  }
 
   // To implement later:
   // findAll - don't really see a use for this ATM, but may want to include for future use(s)
