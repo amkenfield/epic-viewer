@@ -197,17 +197,27 @@ describe("update", function() {
 
 // /************************************** remove */
 
-// see note in model file - remove method not currently functional,
-// will set aside for time being
+describe("remove", function() {
+  test("works: no associated works", async function() {
+    await Author.remove(testAuthorIds[2]);
+    const result = await db.query(
+          `SELECT short_name FROM authors WHERE id=${testAuthorIds[2]}`);
+    expect(result.rows.length).toEqual(0);
+  });
 
-// describe("remove", function() {
-//   test("works", async function() {
-//     console.log("testworkids: ", testWorkIds)
-//     const testRes = await Author.get(testWorkIds[0]);
-//     console.log("testres: ", testRes);
-//     await Author.remove(testWorkIds[0]);
-//     const result = await db.query(
-//           `SELECT short_name FROM authors WHERE id=${testAuthorIds[0]}`);
-//     expect(result.rows.length).toEqual(0);
-//   });
-// });
+  test("works: with associated works", async function() {
+    await Author.remove(testAuthorIds[0]);
+    const result = await db.query(
+          `SELECT short_name FROM authors WHERE id=${testAuthorIds[0]}`);
+    expect(result.rows.length).toEqual(0);
+  });
+
+  test("not found if no such author", async function() {
+    try {
+      await Author.remove(-1);
+      fail();
+    } catch(e) {
+      expect(e instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});

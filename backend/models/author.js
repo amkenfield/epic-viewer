@@ -1,9 +1,11 @@
 "use strict";
 
+const { disable } = require('colors');
 const db = require('../db');
 const {BadRequestError, NotFoundError} = require('../expressError');
 const {sqlForPartialUpdate} = require('../helpers/sql');
 const { testAuthorIds } = require('./_testCommon');
+const Work = require('./work.js');
 
 class Author {
   
@@ -169,21 +171,36 @@ class Author {
    * Throws NotFoundError if author not found.
    */
 
-  // The below is not functional as currently written;
-  // b/c delete functionality not needed for initial iteration
-  // of app (only for DevTools/etc), will pass over for now.
+  static async remove(id) {
+    const worksRes = await db.query(
+          `SELECT id,
+                  short_title AS "shortTitle",
+                  full_title AS "fullTitle",
+                  lang_code AS "langCode",
+                  author_id AS "authorId"
+           FROM works
+           WHERE author_id = $1`,
+          [id]);
+    console.log("worksRes: ", worksRes.rows);
 
-  // static async remove(id) {
-  //   const result = await db.query(
-  //         `DELETE
-  //          FROM authors
-  //          WHERE id = ${id}
-  //          RETURNING id`);
-  //   console.log("result: ", result)
-  //   const author = result.rows[0];
+    if(worksRes.rows.length) {
+      await db.query(
+        `UPDATE works
+         SET author_id = NULL
+         WHERE author_id = $1`,
+        [id]);
+    };
 
-  //   if(!author) throw new NotFoundError(`No such author with id: ${id}`);
-  // }
+    const result = await db.query(
+          `DELETE
+           FROM authors
+           WHERE id = $1
+           RETURNING id`,
+          [id]);
+    const author = result.rows[0];
+
+    if(!author) throw new NotFoundError(`No such author with id: ${id}`);
+  }
 }
 
 module.exports = Author;

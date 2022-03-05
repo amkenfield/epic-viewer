@@ -179,11 +179,18 @@ class Work {
 
     return work;
   }
-  // To implement later:
-
-  // delete
-
-
-}
+ 
+  static async remove(id) {
+    const result = await db.query(
+          `DELETE
+           FROM works
+           WHERE id = $1
+           RETURNING id`,
+          [id]);
+    const work = result.rows[0];
+    
+    if(!work) throw new NotFoundError(`No work with id: ${id}`);
+  };
+};
 
 module.exports = Work;

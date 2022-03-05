@@ -309,13 +309,40 @@ describe("update", function() {
       expect(e instanceof NotFoundError).toBeTruthy();
     }
   });
-  // test-bad request with no data
+
   test("bad request with no data", async function() {
     try {
       await Work.update(testWorkIds[0], {});
       fail();
     } catch(e) {
       expect(e instanceof BadRequestError).toBeTruthy();
+    }
+  });
+});
+
+/************************************** remove */
+
+describe("remove", function() {
+  test("works: no associated lines", async function() {
+    await Work.remove(testWorkIds[2]);
+    const res = await db.query(
+          `SELECT id FROM works WHERE id = $1`, [testWorkIds[2]]);
+    expect(res.rows.length).toEqual(0);
+  });
+
+  test("works: with associated lines", async function() {
+    await Work.remove(testWorkIds[0]);
+    const res = await db.query(
+          `SELECT id FROM works WHERE id = $1`, [testWorkIds[0]]);
+    expect(res.rows.length).toEqual(0);
+  });
+
+  test("not found if no such work", async function() {
+    try {
+      await Work.remove(-1);
+      fail();
+    } catch(e) {
+      expect(e instanceof NotFoundError).toBeTruthy();
     }
   });
 });
