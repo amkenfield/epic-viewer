@@ -10,6 +10,8 @@ const {
   commonAfterAll,
   testAuthorIds,
   testWorkIds,
+  testLineIds,
+  testScanPatternIds
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -65,21 +67,21 @@ describe("findAll", function() {
     let works = await Work.findAll();
     expect(works).toEqual([
       {
-        id: expect.any(Number),
+        id: testWorkIds[0],
         shortTitle: "Primum",
         fullTitle: "Opus Primum De Anima",
         authorId: testAuthorIds[0],
         langCode: "LAT"
       },
       {
-        id: expect.any(Number),
+        id: testWorkIds[1],
         shortTitle: "Secundum",
         fullTitle: "Opus Secundum De Corpore",
         authorId: testAuthorIds[0],
         langCode: "LAT"
       },
       {
-        id: expect.any(Number),
+        id: testWorkIds[2],
         shortTitle: "Tertium",
         fullTitle: "Opus Tertium De Otio",
         authorId: testAuthorIds[1],
@@ -92,7 +94,7 @@ describe("findAll", function() {
     let works = await Work.findAll({shortTitle: "Sec"});
     expect(works).toEqual([
       {
-        id: expect.any(Number),
+        id: testWorkIds[1],
         shortTitle: "Secundum",
         fullTitle: "Opus Secundum De Corpore",
         authorId: testAuthorIds[0],
@@ -105,7 +107,7 @@ describe("findAll", function() {
     let works = await Work.findAll({fullTitle: "De Otio"});
     expect(works).toEqual([
       {
-        id: expect.any(Number),
+        id: testWorkIds[2],
         shortTitle: "Tertium",
         fullTitle: "Opus Tertium De Otio",
         authorId: testAuthorIds[1],
@@ -118,21 +120,21 @@ describe("findAll", function() {
     let works = await Work.findAll({langCode: "LAT"});
     expect(works).toEqual([
       {
-        id: expect.any(Number),
+        id: testWorkIds[0],
         shortTitle: "Primum",
         fullTitle: "Opus Primum De Anima",
         authorId: testAuthorIds[0],
         langCode: "LAT"
       },
       {
-        id: expect.any(Number),
+        id: testWorkIds[1],
         shortTitle: "Secundum",
         fullTitle: "Opus Secundum De Corpore",
         authorId: testAuthorIds[0],
         langCode: "LAT"
       },
       {
-        id: expect.any(Number),
+        id: testWorkIds[2],
         shortTitle: "Tertium",
         fullTitle: "Opus Tertium De Otio",
         authorId: testAuthorIds[1],
@@ -145,14 +147,14 @@ describe("findAll", function() {
     let works = await Work.findAll({authorId: testAuthorIds[0]});
     expect(works).toEqual([
       {
-        id: expect.any(Number),
+        id: testWorkIds[0],
         shortTitle: "Primum",
         fullTitle: "Opus Primum De Anima",
         authorId: testAuthorIds[0],
         langCode: "LAT"
       },
       {
-        id: expect.any(Number),
+        id: testWorkIds[1],
         shortTitle: "Secundum",
         fullTitle: "Opus Secundum De Corpore",
         authorId: testAuthorIds[0],
@@ -172,7 +174,7 @@ describe("findAll", function() {
   // 2 - unsure if validation even needed here;
   //      wouldn't it be done on the front-end (input form)?
   // ********
-  
+
   // bad request if author name, not id (?)
   // test("bad request if author name (ie. str), not id", async function() {
   //   try {
@@ -189,3 +191,53 @@ describe("findAll", function() {
   //   expect(works).toEqual([]);
   // })
 })
+
+/************************************** get */
+
+describe("get", function() {
+  test("works", async function() {
+    let work = await Work.get(testWorkIds[0]);
+    expect(work).toEqual({
+      id: testWorkIds[0],
+      shortTitle: 'Primum',
+      fullTitle: 'Opus Primum De Anima',
+      langCode: 'LAT',
+      authorId: testAuthorIds[0],
+      lines: [
+        {
+          id: testLineIds[0],
+          lineNum: 1,
+          lineText: 'Qui fit, Maecenas, ut nemo, quam sibi sortem',
+          fifthFootSpondee: false,
+          scanPatternId: testScanPatternIds[15],
+          bookNum: 1
+        },
+        {
+          id: testLineIds[1],
+          lineNum: 2,
+          lineText: 'seu ratio dederit seu fors obiecerit, illa',
+          fifthFootSpondee: false,
+          scanPatternId: testScanPatternIds[3],
+          bookNum: 1
+        },
+        {
+          id: testLineIds[2],
+          lineNum: 3,
+          lineText: 'contentus vivat, laudet diversa sequentes?',
+          fifthFootSpondee: false,
+          scanPatternId: testScanPatternIds[15],
+          bookNum: 1
+        }
+      ]
+    });
+  });
+
+  test("not found if no such work", async function() {
+    try{
+      await Work.get(-1);
+      fail();
+    } catch(e) {
+      expect(e instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});

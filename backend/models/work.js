@@ -92,9 +92,60 @@ class Work {
     return worksRes.rows;
   }
 
+  /** Given a work, return data about work.
+  *
+  * Returns { id, shortTitle, fullTitle, langCode, authorId, lines }
+  *   where lines is [{ id,  lineNum, lineText, fifthFootSpondee, scanPatternId, bookNum }, ...]
+  *
+  * searchFilters on lines (all optional(?)):
+  * - startLine
+  * - endLine
+  * --TO BE ADDED v1.1/etc
+  * -- THOUGH: do backend work now, can decide on frontend if want to implement right now or wait
+  * - bookNum
+  * - scanPattern
+  * - lineText (will find case insensitive, partial matches)
+  * 
+  * Throws NotFoundError if not found.
+  **/
+
+  static async get(id) {
+    const workRes = await db.query(
+          `SELECT id,
+                  short_title AS "shortTitle",
+                  full_title AS "fullTitle",
+                  lang_code AS "langCode",
+                  author_id AS "authorId"
+           FROM works
+           WHERE id = $1`,
+          [id]);
+
+    const work = workRes.rows[0];
+
+    if(!work) throw new NotFoundError(`No work with id: ${id}`);
+
+    const linesRes = await db.query(
+          `SELECT id,
+                  line_num AS "lineNum",
+                  line_text AS "lineText",
+                  fifth_foot_spondee AS "fifthFootSpondee",
+                  scan_pattern_id AS "scanPatternId",
+                  book_num AS "bookNum"
+           FROM lines
+           WHERE work_id = $1
+           ORDER BY book_num, line_num`,
+          [id]);
+
+    work.lines = linesRes.rows;
+
+    return work;
+  }
   // To implement later:
-  // findAll - don't really see a use for this ATM, but may want to include for future use(s)
+
   // update
+  // Returns { id, shortTitle, fullTitle, langCode, authorId, lines }
+  // *   where lines is [{ id,  lineNum, lineText, fifthFootSpondee, scanPatternId, bookNum }, ...]
+  // *
   // delete
 
 
