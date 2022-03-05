@@ -241,3 +241,81 @@ describe("get", function() {
     }
   });
 });
+
+/************************************** update */
+
+describe("update", function() {
+  const updateData = {
+    shortTitle: "Novum",
+    fullTitle: "Libellum Novum De Ludis",
+  }
+  
+  test("works", async function() {
+    updateData.authorId = testAuthorIds[2];
+    let work = await Work.update(testWorkIds[0], updateData);
+    expect(work).toEqual({
+      id: testWorkIds[0],
+      langCode: "LAT",
+      ...updateData
+    });
+
+    const result = await db.query(
+          `SELECT id, short_title, full_title, lang_code, author_id
+           FROM works
+           WHERE id = $1`,
+           [testWorkIds[0]]);
+    expect(result.rows).toEqual([{
+      id: testWorkIds[0],
+      short_title: "Novum",
+      full_title: "Libellum Novum De Ludis",
+      lang_code: "LAT",
+      author_id: testAuthorIds[2]
+    }]);
+  });
+
+  test("works: null fields", async function() {
+    const updataDataSetNulls = {
+      shortTitle: "Novum",
+      fullTitle: null,
+      authorId: null,
+      langCode: null
+    };
+
+    let work = await Work.update(testWorkIds[0], updataDataSetNulls);
+    expect(work).toEqual({
+      id: testWorkIds[0],
+      ...updataDataSetNulls
+    });
+
+    const result = await db.query(
+          `SELECT id, short_title, full_title, lang_code, author_id
+           FROM works
+           WHERE id = $1`,
+           [testWorkIds[0]]);
+    expect(result.rows).toEqual([{
+      id: testWorkIds[0],
+      short_title: "Novum",
+      full_title: null,
+      author_id: null,
+      lang_code: null
+    }]);
+  });
+
+  test("not found if no such work", async function() {
+    try {
+      await Work.update(-1, updateData);
+      fail();
+    } catch(e) {
+      expect(e instanceof NotFoundError).toBeTruthy();
+    }
+  });
+  // test-bad request with no data
+  test("bad request with no data", async function() {
+    try {
+      await Work.update(testWorkIds[0], {});
+      fail();
+    } catch(e) {
+      expect(e instanceof BadRequestError).toBeTruthy();
+    }
+  });
+});

@@ -140,12 +140,47 @@ class Work {
 
     return work;
   }
+
+  /** Update work data with `data`
+   * 
+   *  This is a partial update - data may not contain all fields;
+   *  this only changes provided ones.
+   * 
+   *  Data can include: {shortTitle, fullTitle, langCode, authorId}
+   * 
+   *  Returns {id, shortTitle, fullTitle, langCode, authorId}
+   * 
+   *  Throws NotFoundError if not found.
+   */
+
+  static async update(id, data) {
+    const {setCols, values} = sqlForPartialUpdate(
+      data,
+      {
+        shortTitle: "short_title",
+        fullTitle: "full_title",
+        langCode: "lang_code",
+        authorId: "author_id"
+      });
+    const idVarIdx = "$" + (values.length + 1);
+
+    const querySql = `UPDATE works
+                      SET ${setCols}
+                      WHERE id = ${idVarIdx}
+                      RETURNING id,
+                                short_title AS "shortTitle",
+                                full_title AS "fullTitle",
+                                lang_code AS "langCode",
+                                author_id AS "authorId"`;
+    const result = await db.query(querySql, [...values, id]);
+    const work = result.rows[0];
+
+    if(!work) throw new NotFoundError(`No such work exists with id: ${id}`);
+
+    return work;
+  }
   // To implement later:
 
-  // update
-  // Returns { id, shortTitle, fullTitle, langCode, authorId, lines }
-  // *   where lines is [{ id,  lineNum, lineText, fifthFootSpondee, scanPatternId, bookNum }, ...]
-  // *
   // delete
 
 
