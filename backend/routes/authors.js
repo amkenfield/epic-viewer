@@ -118,19 +118,15 @@ router.patch("/:id", ensureAdmin, async function(req, res, next) {
 /** DELETE /[id] => { deleted: id}
  *
  * Authorization required: admin
- * 
- * NB - not yet functional d/t Author.remove lacking functionality;
- *      will write out now for sake of CRUD completion,
- *      but something definitely to come back to 
  */
 
-// router.delete("/:id", ensureAdmin, async function(req, res, next) {
-//   try {
-//     await Author.remove(req.params.id);
-//     return res.json({ deleted: req.params.id});
-//   } catch(e) {
-//     return next(e);
-//   }
-// });
+router.delete("/:id", ensureAdmin, async function(req, res, next) {
+  try {
+    await Author.remove(req.params.id);
+    return res.json({ deleted: req.params.id});
+  } catch(e) {
+    return next(e);
+  }
+});
 
 module.exports = router;

@@ -234,31 +234,31 @@ describe("PATCH /authors/:id", function() {
 
 /************************************** DELETE /authors/:id */
 
-// describe("DELETE /authors/:id", function() {
-//   test("works for admin", async function() {
-//     const resp = await request(app)
-//           .delete(`/authors/${testAuthorIds[0]}`)
-//           .set("authorization", `Bearer ${adminToken}`);
-//     expect(resp.body).toEqual({deleted: expect.any(Number)})
-//   });
+describe("DELETE /authors/:id", function() {
+  test("works for admin", async function() {
+    const resp = await request(app)
+          .delete(`/authors/${testAuthorIds[0]}`)
+          .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.body).toEqual({deleted: testAuthorIds[0].toString()});
+  });
 
-//   test("unauth for non-admin", async function() {
-//     const resp = await request(app)
-//           .delete(`/authors/${testAuthorIds[0]}`)
-//           .set("authorization", `Bearer ${u1Token}`);
-//     expect(resp.status).toEqual(401);
-//   });
+  test("unauth for non-admin", async function() {
+    const resp = await request(app)
+          .delete(`/authors/${testAuthorIds[0]}`)
+          .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.status).toEqual(401);
+  });
 
-//   test("unauth for anon", async function() {
-//     const resp = await request(app)
-//           .delete(`/authors/${testAuthorIds[0]}`);
-//     expect(resp.statusCode).toEqual(401);
-//   });
+  test("unauth for anon", async function() {
+    const resp = await request(app)
+          .delete(`/authors/${testAuthorIds[0]}`);
+    expect(resp.statusCode).toEqual(401);
+  });
 
-//   test("not found for no such author", async function() {
-//     const resp = await request(app)
-//           .delete(`/authors/${-1}`)
-//           .set("authorization", `Bearer ${adminToken}`);
-//     expect(resp.statusCode).toEqual(404);
-//   });
-// });
+  test("not found for no such author", async function() {
+    const resp = await request(app)
+          .delete(`/authors/${-1}`)
+          .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.statusCode).toEqual(404);
+  });
+});
