@@ -100,8 +100,6 @@ class Work {
   * searchFilters on lines (all optional(?)):
   * - startLine
   * - endLine
-  * --TO BE ADDED v1.1/etc
-  * -- THOUGH: do backend work now, can decide on frontend if want to implement right now or wait
   * - bookNum
   * - scanPattern
   * - lineText (will find case insensitive, partial matches)
@@ -109,7 +107,7 @@ class Work {
   * Throws NotFoundError if not found.
   **/
 
-  static async get(id) {
+  static async get(id, searchFilters = {}) {
     const workRes = await db.query(
           `SELECT id,
                   short_title AS "shortTitle",
@@ -124,18 +122,48 @@ class Work {
 
     if(!work) throw new NotFoundError(`No work with id: ${id}`);
 
-    const linesRes = await db.query(
-          `SELECT id,
-                  line_num AS "lineNum",
-                  line_text AS "lineText",
-                  fifth_foot_spondee AS "fifthFootSpondee",
-                  scan_pattern_id AS "scanPatternId",
-                  book_num AS "bookNum"
-           FROM lines
-           WHERE work_id = $1
-           ORDER BY book_num, line_num`,
-          [id]);
+    let linesQuery =  `SELECT id,
+                              line_num AS "lineNum",
+                              line_text AS "lineText",
+                              fifth_foot_spondee AS "fifthFootSpondee",
+                              scan_pattern_id AS "scanPatternId",
+                              book_num AS "bookNum"
+                       FROM lines`;
+    let linesWhereExpressions = [`work_id = $1`];
+    let linesQueryValues = [id];
 
+    const {startLine, endLine, bookNum, scanPatternId, lineText} = searchFilters;
+
+    if(startLine > endLine) throw new BadRequestError("Starting line cannot be greater than ending line.");
+
+    if(startLine !== undefined) {
+      linesQueryValues.push(startLine);
+      linesWhereExpressions.push(`line_num >= $${linesQueryValues.length}`);
+    }
+
+    if(endLine !== undefined) {
+      linesQueryValues.push(endLine);
+      linesWhereExpressions.push(`line_num <= $${linesQueryValues.length}`);
+    }
+
+    if(bookNum) {
+      linesQueryValues.push(bookNum);
+      linesWhereExpressions.push(`book_num = $${linesQueryValues.length}`);
+    }
+
+    if(scanPatternId) {
+      linesQueryValues.push(scanPatternId);
+      linesWhereExpressions.push(`scan_pattern_id = $${linesQueryValues.length}`);
+    }
+
+    if(lineText) {
+      linesQueryValues.push(`%${lineText}%`);
+      linesWhereExpressions.push(`line_text ILIKE $${linesQueryValues.length}`);
+    }
+
+    linesQuery += " WHERE " + linesWhereExpressions.join(" AND ");
+    linesQuery += ` ORDER BY book_num, line_num`;
+    const linesRes = await db.query(linesQuery, linesQueryValues);
     work.lines = linesRes.rows;
 
     return work;
@@ -188,7 +216,7 @@ class Work {
            RETURNING id`,
           [id]);
     const work = result.rows[0];
-    
+
     if(!work) throw new NotFoundError(`No work with id: ${id}`);
   };
 };

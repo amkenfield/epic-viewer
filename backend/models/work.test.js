@@ -232,8 +232,216 @@ describe("get", function() {
     });
   });
 
+  test("works: by startLine", async function() {
+    let work = await Work.get(testWorkIds[0], {startLine: 2});
+    expect(work).toEqual({
+      id: testWorkIds[0],
+      shortTitle: 'Primum',
+      fullTitle: 'Opus Primum De Anima',
+      langCode: 'LAT',
+      authorId: testAuthorIds[0],
+      lines: [
+        {
+          id: testLineIds[1],
+          lineNum: 2,
+          lineText: 'seu ratio dederit seu fors obiecerit, illa',
+          fifthFootSpondee: false,
+          scanPatternId: testScanPatternIds[3],
+          bookNum: 1
+        },
+        {
+          id: testLineIds[2],
+          lineNum: 3,
+          lineText: 'contentus vivat, laudet diversa sequentes?',
+          fifthFootSpondee: false,
+          scanPatternId: testScanPatternIds[15],
+          bookNum: 1
+        }
+      ]
+    });
+  });
+
+  test("works: by endLine", async function() {
+    let work = await Work.get(testWorkIds[0], {endLine: 2});
+    expect(work).toEqual({
+      id: testWorkIds[0],
+      shortTitle: 'Primum',
+      fullTitle: 'Opus Primum De Anima',
+      langCode: 'LAT',
+      authorId: testAuthorIds[0],
+      lines: [
+        {
+          id: testLineIds[0],
+          lineNum: 1,
+          lineText: 'Qui fit, Maecenas, ut nemo, quam sibi sortem',
+          fifthFootSpondee: false,
+          scanPatternId: testScanPatternIds[15],
+          bookNum: 1
+        },
+        {
+          id: testLineIds[1],
+          lineNum: 2,
+          lineText: 'seu ratio dederit seu fors obiecerit, illa',
+          fifthFootSpondee: false,
+          scanPatternId: testScanPatternIds[3],
+          bookNum: 1
+        }
+      ]
+    });
+  });
+
+  test("works: by start + end line", async function() {
+    let work = await Work.get(testWorkIds[0], {startLine: 2, endLine: 2});
+    expect(work).toEqual({
+      id: testWorkIds[0],
+      shortTitle: 'Primum',
+      fullTitle: 'Opus Primum De Anima',
+      langCode: 'LAT',
+      authorId: testAuthorIds[0],
+      lines: [
+        {
+          id: testLineIds[1],
+          lineNum: 2,
+          lineText: 'seu ratio dederit seu fors obiecerit, illa',
+          fifthFootSpondee: false,
+          scanPatternId: testScanPatternIds[3],
+          bookNum: 1
+        }
+      ]
+    });
+  });
+// works: by bookNum
+  test("works: by bookNum", async function() {
+    let work = await Work.get(testWorkIds[0], {bookNum: 1});
+    expect(work).toEqual({
+      id: testWorkIds[0],
+      shortTitle: 'Primum',
+      fullTitle: 'Opus Primum De Anima',
+      langCode: 'LAT',
+      authorId: testAuthorIds[0],
+      lines: [
+        {
+          id: testLineIds[0],
+          lineNum: 1,
+          lineText: 'Qui fit, Maecenas, ut nemo, quam sibi sortem',
+          fifthFootSpondee: false,
+          scanPatternId: testScanPatternIds[15],
+          bookNum: 1
+        },
+        {
+          id: testLineIds[1],
+          lineNum: 2,
+          lineText: 'seu ratio dederit seu fors obiecerit, illa',
+          fifthFootSpondee: false,
+          scanPatternId: testScanPatternIds[3],
+          bookNum: 1
+        },
+        {
+          id: testLineIds[2],
+          lineNum: 3,
+          lineText: 'contentus vivat, laudet diversa sequentes?',
+          fifthFootSpondee: false,
+          scanPatternId: testScanPatternIds[15],
+          bookNum: 1
+        }
+      ]
+    })
+  })
+
+  test("works: by scanPattern", async function() {
+    let work = await Work.get(testWorkIds[0], {scanPatternId: testScanPatternIds[15]});
+    expect(work).toEqual({
+      id: testWorkIds[0],
+      shortTitle: 'Primum',
+      fullTitle: 'Opus Primum De Anima',
+      langCode: 'LAT',
+      authorId: testAuthorIds[0],
+      lines: [
+        {
+          id: testLineIds[0],
+          lineNum: 1,
+          lineText: 'Qui fit, Maecenas, ut nemo, quam sibi sortem',
+          fifthFootSpondee: false,
+          scanPatternId: testScanPatternIds[15],
+          bookNum: 1
+        },
+        {
+          id: testLineIds[2],
+          lineNum: 3,
+          lineText: 'contentus vivat, laudet diversa sequentes?',
+          fifthFootSpondee: false,
+          scanPatternId: testScanPatternIds[15],
+          bookNum: 1
+        }
+      ]
+    });
+  });
+// works: by lineText
+  test("works: by lineText (full word)", async function() {
+    let work = await Work.get(testWorkIds[0], {lineText: "Maecenas"});
+    expect(work).toEqual({
+      id: testWorkIds[0],
+      shortTitle: 'Primum',
+      fullTitle: 'Opus Primum De Anima',
+      langCode: 'LAT',
+      authorId: testAuthorIds[0],
+      lines: [
+        {
+          id: testLineIds[0],
+          lineNum: 1,
+          lineText: 'Qui fit, Maecenas, ut nemo, quam sibi sortem',
+          fifthFootSpondee: false,
+          scanPatternId: testScanPatternIds[15],
+          bookNum: 1
+        }
+      ]
+    });
+  });
+
+  test("works: by lineText (partial word)", async function() {
+    let work = await Work.get(testWorkIds[0], {lineText: "aude"});
+    expect(work).toEqual({
+      id: testWorkIds[0],
+      shortTitle: 'Primum',
+      fullTitle: 'Opus Primum De Anima',
+      langCode: 'LAT',
+      authorId: testAuthorIds[0],
+      lines: [
+        {
+          id: testLineIds[2],
+          lineNum: 3,
+          lineText: 'contentus vivat, laudet diversa sequentes?',
+          fifthFootSpondee: false,
+          scanPatternId: testScanPatternIds[15],
+          bookNum: 1
+        }
+      ]
+    });
+  });
+
+  test("works: empty lines list on nothing found", async function() {
+    let work = await Work.get(testWorkIds[0], {bookNum: 47});
+    expect(work).toEqual({
+      id: testWorkIds[0],
+      shortTitle: 'Primum',
+      fullTitle: 'Opus Primum De Anima',
+      langCode: 'LAT',
+      authorId: testAuthorIds[0],
+      lines: []
+    });
+  });
+
+  test("bad request if invalid startLine > endLine", async function() {
+    try {
+      await Work.get(testWorkIds[0], {startLine: 3, endLine: 1});
+      fail();
+    } catch(e) {
+      expect(e instanceof BadRequestError).toBeTruthy();
+    }
+  })
+
   test("not found if no such work", async function() {
-    try{
+    try {
       await Work.get(-1);
       fail();
     } catch(e) {
