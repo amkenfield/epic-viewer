@@ -193,3 +193,76 @@ describe("GET /works/:id", function() {
     expect(resp.statusCode).toEqual(404);
   })
 });
+
+/************************************** PATCH /works/:id */
+
+describe("PATCH /works/:id", function() {
+  test("ok for admin", async function() {
+    const resp = await request(app)
+          .patch(`/works/${testWorkIds[0]}`)
+          .send({
+            shortTitle: "Supremum",
+            fullTitle: "Opus Supremum De Formicis",
+            authorId: testAuthorIds[2]
+          })
+          .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.body).toEqual({
+      work: {
+        id: testWorkIds[0],
+        shortTitle: "Supremum",
+        fullTitle: "Opus Supremum De Formicis",
+        authorId: testAuthorIds[2],
+        langCode: "LAT"
+      }
+    });
+  });
+
+  test("unauth for non-admin", async function() {
+    const resp = await request(app)
+          .patch(`/works/${testWorkIds[0]}`)
+          .send({
+            shortTitle: "Biggus"
+          })
+          .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(401);
+  });
+
+  test("unauth for anon", async function() {
+    const resp = await request(app)
+          .patch(`/works/${testWorkIds[0]}`)
+          .send({
+            shortTitle: "Biggus"
+          });
+    expect(resp.statusCode).toEqual(401);
+  });
+
+  test("not found on no such work", async function() {
+    const resp = await request(app)
+          .patch(`/works/${0}`)
+          .send({
+            shortTitle: "Biggus"
+          })
+          .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.statusCode).toEqual(404);
+  });
+
+  test("bad request on id change attempt", async function() {
+    const resp = await request(app)
+          .patch(`/works/${testAuthorIds[0]}`)
+          .send({
+            id: 12345
+          })
+          .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.statusCode).toEqual(400);
+  });
+
+  test("bad request on invalid data", async function() {
+    const resp = await request(app)
+          .patch(`/authors/${testAuthorIds[0]}`)
+          .send({
+            shortName: 12345
+          })
+          .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.statusCode).toEqual(400);
+  });
+});

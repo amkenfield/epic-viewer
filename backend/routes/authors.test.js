@@ -190,7 +190,7 @@ describe("GET /authors/:id", function() {
 /************************************** PATCH /authors/:id */
 
 describe("PATCH /authors/:id", function() {
-  test("works for admin", async function() {
+  test("ok for admin", async function() {
     const resp = await request(app)
           .patch(`/authors/${testAuthorIds[0]}`)
           .send({

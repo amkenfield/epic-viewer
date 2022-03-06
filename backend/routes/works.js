@@ -51,7 +51,6 @@ router.post("/", ensureAdmin, async function(req, res, next) {
  */
 
 router.get("/", async function(req, res, next) {
-  console.log("req query: ", req.query)
   const q = req.query;
   if(q.authorId !== undefined) q.authorId = +q.authorId;
 
@@ -75,11 +74,39 @@ router.get("/", async function(req, res, next) {
  *      where lines is [{ id, lineNum, lineText, fifthFootSpondee,
  *                       scanPatternId, bookNum }, ...]
  *  (ATM, lines will be empty array; that'll wait for full Line/Lines implementation)
+ * 
+ *  Authorization required: none
  */
 
 router.get("/:id", async function(req, res, next) {
   try {
     const work = await Work.get(req.params.id);
+    return res.json({work});
+  } catch(e) {
+    return next(e);
+  }
+});
+
+/** PATCH /[id] { fld1, fld2, ... } => { work }
+ * 
+ * Patches work data.
+ * 
+ * Fields can be : { shortTitle, fullTitle, langCode, authorId }
+ * 
+ * Returns { id, shortTitle, fullTitle, langCode, authorId }
+ * 
+ * Authorization required: none
+ */
+
+router.patch("/:id", ensureAdmin, async function(req, res, next) {
+  try {
+    const validator = jsonschema.validate(req.body, workUpdateSchema);
+    if(!validator.valid) {
+      const errs = validator.errors.map(e => e.stack);
+      throw new BadRequestError(errs);
+    }
+
+    const work = await Work.update(req.params.id, req.body);
     return res.json({work});
   } catch(e) {
     return next(e);
