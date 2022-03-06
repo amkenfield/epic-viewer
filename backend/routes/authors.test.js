@@ -96,7 +96,7 @@ describe("GET /authors", function() {
     });
   });
 
-  test("works: filtering (single result)", async function() {
+  test("ok: filtering (single result)", async function() {
     const resp = await request(app)
           .get("/authors")
           .query({shortName: "Mendax"});
@@ -111,7 +111,7 @@ describe("GET /authors", function() {
     });
   });
 
-  test("works: filtering (multiple results)", async function() {
+  test("ok: filtering (multiple results)", async function() {
     const resp = await request(app)
           .get("/authors")
           .query({shortName: "ull"});
@@ -142,7 +142,7 @@ describe("GET /authors", function() {
 /************************************** GET /authors/:id */
 
 describe("GET /authors/:id", function() {
-  test("works for anon: author w/works", async function() {
+  test("ok for anon: author w/works", async function() {
     const resp = await request(app).get(`/authors/${testAuthorIds[0]}`);
     expect(resp.body).toEqual({
       author: {
@@ -169,8 +169,7 @@ describe("GET /authors/:id", function() {
     });
   });
 
-  // test("works for anon: author w/o works") -- TO WRITE, SEE ABOVE
-  test("works for anon: author w/o works", async function() {
+  test("ok for anon: author w/o works", async function() {
     const resp = await request(app).get(`/authors/${testAuthorIds[2]}`);
     expect(resp.body).toEqual({
       author: {
@@ -188,7 +187,7 @@ describe("GET /authors/:id", function() {
   });
 });
 
-/************************************** PATCH /companies/:handle */
+/************************************** PATCH /authors/:id */
 
 describe("PATCH /authors/:id", function() {
   test("works for admin", async function() {

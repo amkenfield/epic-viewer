@@ -155,3 +155,41 @@ describe("GET /works", function() {
     expect(resp.statusCode).toEqual(400);
   });
 });
+
+/************************************** GET /authors/:id */
+
+describe("GET /works/:id", function() {
+  // NB - lines will be [] until Line model implementation completed
+  test("ok for anon: work w/lines", async function() {
+    const resp = await request(app).get(`/works/${testWorkIds[0]}`);
+    expect(resp.body).toEqual({
+      work: {
+        id: testWorkIds[0],
+        shortTitle: "Primum",
+        fullTitle: "Opus Primum De Anima",
+        langCode: "LAT",
+        authorId: testAuthorIds[0],
+        lines: []
+      }
+    });
+  });
+
+  test("ok for anon: work w/o lines", async function() {
+    const resp = await request(app).get(`/works/${testWorkIds[2]}`);
+    expect(resp.body).toEqual({
+      work: {
+        id: testWorkIds[2],
+        shortTitle: "Tertium",
+        fullTitle: "Opus Tertium De Otio",
+        langCode: "LAT",
+        authorId: testAuthorIds[1],
+        lines: []
+      }
+    });
+  });
+
+  test("not found for no such work", async function() {
+    const resp = await request(app).get(`/works/0`);
+    expect(resp.statusCode).toEqual(404);
+  })
+});

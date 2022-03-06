@@ -77,4 +77,13 @@ router.get("/", async function(req, res, next) {
  *  (ATM, lines will be empty array; that'll wait for full Line/Lines implementation)
  */
 
+router.get("/:id", async function(req, res, next) {
+  try {
+    const work = await Work.get(req.params.id);
+    return res.json({work});
+  } catch(e) {
+    return next(e);
+  }
+});
+
 module.exports = router;
