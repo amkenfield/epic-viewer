@@ -13,12 +13,6 @@ const authorSearchSchema = require('../schemas/authorSearch.json');
 
 const router = new express.Router();
 
-// To Implement Now:
-// GET author (by id)
-// PATCH author
-
-// To Implement Later:
-// DELETE author - though, I'm not sure if this even ought to be included
 
 /** POST / { author } => { author }
 * 
@@ -76,7 +70,6 @@ router.get("/", async function(req, res, next) {
  *
  *  Returns {id, shortName, fullName, works }
  *      where works is [{id, shortTitle, fullTitle, langCode}, ...]
- *  (ATM, works will be empty array; that'll wait for full Work/Works implementation)
  *
  * Authorization required: none
  */

@@ -10,9 +10,15 @@ const testAuthorIds = [];
 const testWorkIds = [];
 
 async function commonBeforeAll() {
+  
   await db.query("DELETE FROM works");
+  await db.query("DELETE FROM languages");
   await db.query("DELETE FROM authors");
   await db.query("DELETE FROM users");
+
+  await db.query(`
+    INSERT INTO languages (name, lang_code)
+    VALUES ('Latin', 'LAT')`);
 
   testAuthorIds[0] = (await Author.create(
     {shortName: "Mendax", fullName: "Publius Flavius Mendax"})).id;
@@ -20,9 +26,6 @@ async function commonBeforeAll() {
     {shortName: "Pullo", fullName: "Titus Pullo"})).id;
   testAuthorIds[2] = (await Author.create(
     {shortName: "Tully", fullName: "Marcus Tullius Cicero"})).id;
-
-  // Still need to create test works (and lines...),
-  // but will wait until after authors routes are successfully tested
 
   testWorkIds[0] = (await Work.create(
     {shortTitle: "Primum", fullTitle: "Opus Primum De Anima",

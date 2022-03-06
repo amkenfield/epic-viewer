@@ -180,7 +180,7 @@ describe("GET /authors/:id", function() {
         works: []
       }
     });
-  });
+  })
 
   test("not found for no such author", async function() {
     const resp = await request(app).get('/authors/0');
