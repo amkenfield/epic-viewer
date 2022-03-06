@@ -108,7 +108,50 @@ describe("GET /works", function() {
       ]
     });
   });
-  // ok: filtering (single filter)
-  // ok: filtering (all filters)
-  // bad request if invalid filter key
+  
+  test("ok: filtering (single filter)", async function() {
+    const resp = await request(app)
+          .get("/works")
+          .query({shortTitle: "Secundum"});
+    expect(resp.body).toEqual({
+      works: [
+        {
+          id: testWorkIds[1],
+          shortTitle: "Secundum",
+          fullTitle: "Opus Secundum De Corpore",
+          langCode: "LAT",
+          authorId: testAuthorIds[0]
+        }
+      ]
+    });
+  });
+
+  test("ok: filtering (all filters)", async function() {
+    const resp = await request(app)
+          .get("/works")
+          .query({
+            shortTitle: "Ter",
+            fullTitle: "OTIO",
+            langCode: "LAT",
+            authorId: testAuthorIds[1]
+          });
+    expect(resp.body).toEqual({
+      works: [
+        {
+          id: testWorkIds[2],
+          shortTitle: "Tertium",
+          fullTitle: "Opus Tertium De Otio",
+          langCode: "LAT",
+          authorId: testAuthorIds[1]
+        }
+      ]
+    });
+  });
+
+  test("bad request if invalid filter key", async function() {
+    const resp = await request(app)
+          .get("/works")
+          .query({favColor: "Tyrian Purple"});
+    expect(resp.statusCode).toEqual(400);
+  });
 });
