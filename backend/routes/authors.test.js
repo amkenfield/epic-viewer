@@ -10,6 +10,7 @@ const {
   commonAfterEach,
   commonAfterAll,
   testAuthorIds,
+  testWorkIds,
   u1Token,
   adminToken,
 } = require("./_testCommon");
@@ -33,7 +34,6 @@ describe("POST /authors", function() {
           .send(newAuthor)
           .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(201);
-    console.log("response body: ", resp.body);
     expect(resp.body).toEqual({
       author: {...newAuthor, id: expect.any(Number)}
     });
@@ -142,20 +142,45 @@ describe("GET /authors", function() {
 /************************************** GET /authors/:id */
 
 describe("GET /authors/:id", function() {
-  test("works for anon", async function() {
+  test("works for anon: author w/works", async function() {
     const resp = await request(app).get(`/authors/${testAuthorIds[0]}`);
     expect(resp.body).toEqual({
       author: {
         shortName: "Mendax",
         fullName: "Publius Flavius Mendax",
-        id: expect.any(Number),
-        // NTS - works will be empty for now; will needs add once Works full implementation complete
-        works: []
+        id: testAuthorIds[0],
+        works: [
+          {
+            id: testWorkIds[0],
+            shortTitle: "Primum",
+            fullTitle: "Opus Primum De Anima",
+            langCode: "LAT",
+            authorId: testAuthorIds[0]
+          },
+          {
+            id: testWorkIds[1],
+            shortTitle: "Secundum",
+            fullTitle: "Opus Secundum De Corpore",
+            langCode: "LAT",
+            authorId: testAuthorIds[0]
+          }
+        ]
       }
     });
   });
 
   // test("works for anon: author w/o works") -- TO WRITE, SEE ABOVE
+  test("works for anon: author w/o works", async function() {
+    const resp = await request(app).get(`/authors/${testAuthorIds[2]}`);
+    expect(resp.body).toEqual({
+      author: {
+        shortName: "Tully",
+        fullName: "Marcus Tullius Cicero",
+        id: testAuthorIds[2],
+        works: []
+      }
+    });
+  });
 
   test("not found for no such author", async function() {
     const resp = await request(app).get('/authors/0');

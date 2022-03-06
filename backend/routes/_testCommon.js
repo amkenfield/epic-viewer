@@ -3,9 +3,11 @@
 const db = require("../db.js");
 const User = require("../models/user");
 const Author = require("../models/author");
+const Work = require('../models/work');
 const { createToken } = require("../helpers/tokens");
 
 const testAuthorIds = [];
+const testWorkIds = [];
 
 async function commonBeforeAll() {
   await db.query("DELETE FROM works");
@@ -19,8 +21,18 @@ async function commonBeforeAll() {
   testAuthorIds[2] = (await Author.create(
     {shortName: "Tully", fullName: "Marcus Tullius Cicero"})).id;
 
-  // Still need to create test jobs (and lines...),
+  // Still need to create test works (and lines...),
   // but will wait until after authors routes are successfully tested
+
+  testWorkIds[0] = (await Work.create(
+    {shortTitle: "Primum", fullTitle: "Opus Primum De Anima",
+     authorId: testAuthorIds[0], langCode: "LAT"})).id;
+  testWorkIds[1] = (await Work.create(
+    {shortTitle: "Secundum", fullTitle: "Opus Secundum De Corpore",
+     authorId: testAuthorIds[0], langCode: "LAT"})).id;
+  testWorkIds[2] = (await Work.create(
+    {shortTitle: "Tertium", fullTitle: "Opus Tertium De Otio",
+     authorId: testAuthorIds[1], langCode: "LAT"})).id;
 
   await User.register({
     username: "u1",
@@ -74,5 +86,6 @@ module.exports = {
   u1Token,
   u2Token,
   adminToken,
-  testAuthorIds
+  testAuthorIds,
+  testWorkIds
 };
