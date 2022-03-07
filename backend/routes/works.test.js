@@ -266,3 +266,34 @@ describe("PATCH /works/:id", function() {
     expect(resp.statusCode).toEqual(400);
   });
 });
+
+/************************************** DELETE /works/:id */
+
+describe("DELETE /works/:id", function() {
+  test("works for admin", async function() {
+    const resp = await request(app)
+          .delete(`/works/${testWorkIds[0]}`)
+          .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.body).toEqual({deleted: testWorkIds[0].toString()});
+  });
+  
+  test("unauth for non-admin", async function() {
+    const resp = await request(app)
+          .delete(`/works/${testWorkIds[0]}`)
+          .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.status).toEqual(401);
+  });
+
+  test("unauth for anon", async function() {
+    const resp = await request(app)
+          .delete(`/works/${testWorkIds[0]}`);
+    expect(resp.statusCode).toEqual(401);
+  });
+
+  test("not found for no such work", async function() {
+    const resp = await request(app)
+          .delete(`/works/${0}`)
+          .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.statusCode).toEqual(404);
+  });
+});
