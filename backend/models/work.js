@@ -6,7 +6,7 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 
 class Work {
 
-  /** Create a work (from data), update db, return new company data
+  /** Create a work (from data), update db, return new work data
    * 
    * data should be { shortTitle, fullTitle, langCode, authorId}
    * 

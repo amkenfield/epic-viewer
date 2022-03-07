@@ -36,8 +36,8 @@ describe("create", function() {
     const result = await db.query(
           `SELECT id, short_title, full_title, lang_code, author_id
            FROM works
-           WHERE id = $1`
-           , [work.id]);
+           WHERE id = $1`,
+          [work.id]);
     expect(result.rows).toEqual([{
       id: work.id,
       short_title: 'Experimentum',

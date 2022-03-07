@@ -181,7 +181,6 @@ class Author {
            FROM works
            WHERE author_id = $1`,
           [id]);
-    console.log("worksRes: ", worksRes.rows);
 
     if(worksRes.rows.length) {
       await db.query(
