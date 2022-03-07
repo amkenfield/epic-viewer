@@ -64,3 +64,453 @@ describe("create", function() {
     }
   });
 });
+
+/************************************** findAll */
+
+describe("findAll", function() {
+  test("ok: all", async function() {
+    let lines = await Line.findAll();
+    expect(lines).toEqual([
+      {
+        id: testLineIds[0],
+        lineNum: 1,
+        lineText: "Qui fit, Maecenas, ut nemo, quam sibi sortem",
+        fifthFootSpondee: false,
+        scanPattern: "SSSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      },
+      {
+        id: testLineIds[1],
+        lineNum: 2,
+        lineText: "seu ratio dederit seu fors obiecerit, illa",
+        fifthFootSpondee: false,
+        scanPattern: "DDSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      },
+      {
+        id: testLineIds[2],
+        lineNum: 3,
+        lineText: "contentus vivat, laudet diversa sequentes?",
+        fifthFootSpondee: false,
+        scanPattern: "SSSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      },
+      {
+        id: testLineIds[3],
+        lineNum: 1,
+        lineText: "Quamvis digressu veteris confusus amici",
+        fifthFootSpondee: false,
+        scanPattern: "SSDS",
+        bookNum: 3,
+        workId: testWorkIds[1]
+      },
+      {
+        id: testLineIds[4],
+        lineNum: 2,
+        lineText: "laudo tamen, vacuis quod sedem figere Cumis",
+        fifthFootSpondee: false,
+        scanPattern: "DDSS",
+        bookNum: 3,
+        workId: testWorkIds[1]
+      },
+      {
+        id: testLineIds[5],
+        lineNum: 3,
+        lineText: "destinet atque unum civem donare Sibyllae",
+        fifthFootSpondee: false,
+        scanPattern: "DSSS",
+        bookNum: 3,
+        workId: testWorkIds[1]
+      }
+    ]);
+  });
+
+  test("ok: by workId", async function() {
+    let lines = await Line.findAll({workId: testWorkIds[1]});
+    expect(lines).toEqual([
+      {
+        id: testLineIds[3],
+        lineNum: 1,
+        lineText: "Quamvis digressu veteris confusus amici",
+        fifthFootSpondee: false,
+        scanPattern: "SSDS",
+        bookNum: 3,
+        workId: testWorkIds[1]
+      },
+      {
+        id: testLineIds[4],
+        lineNum: 2,
+        lineText: "laudo tamen, vacuis quod sedem figere Cumis",
+        fifthFootSpondee: false,
+        scanPattern: "DDSS",
+        bookNum: 3,
+        workId: testWorkIds[1]
+      },
+      {
+        id: testLineIds[5],
+        lineNum: 3,
+        lineText: "destinet atque unum civem donare Sibyllae",
+        fifthFootSpondee: false,
+        scanPattern: "DSSS",
+        bookNum: 3,
+        workId: testWorkIds[1]
+      }
+    ]);
+  });
+
+  test("ok: by minLineNum", async function() {
+    let lines = await Line.findAll({minLineNum: 2});
+    expect(lines).toEqual([
+      {
+        id: testLineIds[1],
+        lineNum: 2,
+        lineText: "seu ratio dederit seu fors obiecerit, illa",
+        fifthFootSpondee: false,
+        scanPattern: "DDSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      },
+      {
+        id: testLineIds[2],
+        lineNum: 3,
+        lineText: "contentus vivat, laudet diversa sequentes?",
+        fifthFootSpondee: false,
+        scanPattern: "SSSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      },
+      {
+        id: testLineIds[4],
+        lineNum: 2,
+        lineText: "laudo tamen, vacuis quod sedem figere Cumis",
+        fifthFootSpondee: false,
+        scanPattern: "DDSS",
+        bookNum: 3,
+        workId: testWorkIds[1]
+      },
+      {
+        id: testLineIds[5],
+        lineNum: 3,
+        lineText: "destinet atque unum civem donare Sibyllae",
+        fifthFootSpondee: false,
+        scanPattern: "DSSS",
+        bookNum: 3,
+        workId: testWorkIds[1]
+      }
+    ]);
+  });
+ 
+  test("ok: by maxLineNum", async function() {
+    let lines = await Line.findAll({maxLineNum: 2});
+    expect(lines).toEqual([
+      {
+        id: testLineIds[0],
+        lineNum: 1,
+        lineText: "Qui fit, Maecenas, ut nemo, quam sibi sortem",
+        fifthFootSpondee: false,
+        scanPattern: "SSSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      },
+      {
+        id: testLineIds[1],
+        lineNum: 2,
+        lineText: "seu ratio dederit seu fors obiecerit, illa",
+        fifthFootSpondee: false,
+        scanPattern: "DDSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      },
+      {
+        id: testLineIds[3],
+        lineNum: 1,
+        lineText: "Quamvis digressu veteris confusus amici",
+        fifthFootSpondee: false,
+        scanPattern: "SSDS",
+        bookNum: 3,
+        workId: testWorkIds[1]
+      },
+      {
+        id: testLineIds[4],
+        lineNum: 2,
+        lineText: "laudo tamen, vacuis quod sedem figere Cumis",
+        fifthFootSpondee: false,
+        scanPattern: "DDSS",
+        bookNum: 3,
+        workId: testWorkIds[1]
+      }
+    ]);
+  });
+
+  test("ok: by minLineNum + maxLineNum", async function() {
+    let lines = await Line.findAll({minLineNum: 2, maxLineNum: 2})
+    expect(lines).toEqual([
+      {
+        id: testLineIds[1],
+        lineNum: 2,
+        lineText: "seu ratio dederit seu fors obiecerit, illa",
+        fifthFootSpondee: false,
+        scanPattern: "DDSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      },
+      {
+        id: testLineIds[4],
+        lineNum: 2,
+        lineText: "laudo tamen, vacuis quod sedem figere Cumis",
+        fifthFootSpondee: false,
+        scanPattern: "DDSS",
+        bookNum: 3,
+        workId: testWorkIds[1]
+      }
+    ]);
+  });
+
+  test("ok: by lineText", async function() {
+    let lines = await Line.findAll({lineText: "ors"});
+    expect(lines).toEqual([
+      {
+        id: testLineIds[1],
+        lineNum: 2,
+        lineText: "seu ratio dederit seu fors obiecerit, illa",
+        fifthFootSpondee: false,
+        scanPattern: "DDSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      }
+    ]);
+  });
+  // ok: by scanPattern
+  test("ok: by scanPattern", async function() {
+    let lines = await Line.findAll({scanPattern: "SSSS"});
+    expect(lines).toEqual([
+      {
+        id: testLineIds[0],
+        lineNum: 1,
+        lineText: "Qui fit, Maecenas, ut nemo, quam sibi sortem",
+        fifthFootSpondee: false,
+        scanPattern: "SSSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      },
+      {
+        id: testLineIds[2],
+        lineNum: 3,
+        lineText: "contentus vivat, laudet diversa sequentes?",
+        fifthFootSpondee: false,
+        scanPattern: "SSSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      }
+    ]);
+  });
+
+  test("ok: by fifthFootSpondee", async function() {
+    let lines = await Line.findAll({fifthFootSpondee: false});
+    expect(lines).toEqual([
+      {
+        id: testLineIds[0],
+        lineNum: 1,
+        lineText: "Qui fit, Maecenas, ut nemo, quam sibi sortem",
+        fifthFootSpondee: false,
+        scanPattern: "SSSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      },
+      {
+        id: testLineIds[1],
+        lineNum: 2,
+        lineText: "seu ratio dederit seu fors obiecerit, illa",
+        fifthFootSpondee: false,
+        scanPattern: "DDSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      },
+      {
+        id: testLineIds[2],
+        lineNum: 3,
+        lineText: "contentus vivat, laudet diversa sequentes?",
+        fifthFootSpondee: false,
+        scanPattern: "SSSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      },
+      {
+        id: testLineIds[3],
+        lineNum: 1,
+        lineText: "Quamvis digressu veteris confusus amici",
+        fifthFootSpondee: false,
+        scanPattern: "SSDS",
+        bookNum: 3,
+        workId: testWorkIds[1]
+      },
+      {
+        id: testLineIds[4],
+        lineNum: 2,
+        lineText: "laudo tamen, vacuis quod sedem figere Cumis",
+        fifthFootSpondee: false,
+        scanPattern: "DDSS",
+        bookNum: 3,
+        workId: testWorkIds[1]
+      },
+      {
+        id: testLineIds[5],
+        lineNum: 3,
+        lineText: "destinet atque unum civem donare Sibyllae",
+        fifthFootSpondee: false,
+        scanPattern: "DSSS",
+        bookNum: 3,
+        workId: testWorkIds[1]
+      }
+    ]);
+  });
+
+  test("ok: by minBookNum", async function() {
+    let lines = await Line.findAll({minBookNum: 2});
+    expect(lines).toEqual([
+      {
+        id: testLineIds[3],
+        lineNum: 1,
+        lineText: "Quamvis digressu veteris confusus amici",
+        fifthFootSpondee: false,
+        scanPattern: "SSDS",
+        bookNum: 3,
+        workId: testWorkIds[1]
+      },
+      {
+        id: testLineIds[4],
+        lineNum: 2,
+        lineText: "laudo tamen, vacuis quod sedem figere Cumis",
+        fifthFootSpondee: false,
+        scanPattern: "DDSS",
+        bookNum: 3,
+        workId: testWorkIds[1]
+      },
+      {
+        id: testLineIds[5],
+        lineNum: 3,
+        lineText: "destinet atque unum civem donare Sibyllae",
+        fifthFootSpondee: false,
+        scanPattern: "DSSS",
+        bookNum: 3,
+        workId: testWorkIds[1]
+      }  
+    ]);
+  });
+
+  test("ok: by maxBookNum", async function() {
+    let lines = await Line.findAll({maxBookNum: 2});
+    expect(lines).toEqual([
+      {
+        id: testLineIds[0],
+        lineNum: 1,
+        lineText: "Qui fit, Maecenas, ut nemo, quam sibi sortem",
+        fifthFootSpondee: false,
+        scanPattern: "SSSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      },
+      {
+        id: testLineIds[1],
+        lineNum: 2,
+        lineText: "seu ratio dederit seu fors obiecerit, illa",
+        fifthFootSpondee: false,
+        scanPattern: "DDSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      },
+      {
+        id: testLineIds[2],
+        lineNum: 3,
+        lineText: "contentus vivat, laudet diversa sequentes?",
+        fifthFootSpondee: false,
+        scanPattern: "SSSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      }
+    ]);
+  });
+
+  test("ok: by minBookNum + maxBookNum", async function() {
+    let lines = await Line.findAll({minBookNum: 1, maxBookNum: 1});
+    expect(lines).toEqual([
+      {
+        id: testLineIds[0],
+        lineNum: 1,
+        lineText: "Qui fit, Maecenas, ut nemo, quam sibi sortem",
+        fifthFootSpondee: false,
+        scanPattern: "SSSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      },
+      {
+        id: testLineIds[1],
+        lineNum: 2,
+        lineText: "seu ratio dederit seu fors obiecerit, illa",
+        fifthFootSpondee: false,
+        scanPattern: "DDSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      },
+      {
+        id: testLineIds[2],
+        lineNum: 3,
+        lineText: "contentus vivat, laudet diversa sequentes?",
+        fifthFootSpondee: false,
+        scanPattern: "SSSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      }
+    ]);
+  });
+
+  test("ok: multiple searchFilters", async function() {
+    let lines = await Line.findAll({minLineNum: 2, lineText: "aud"});
+    expect(lines).toEqual([
+      {
+        id: testLineIds[2],
+        lineNum: 3,
+        lineText: "contentus vivat, laudet diversa sequentes?",
+        fifthFootSpondee: false,
+        scanPattern: "SSSS",
+        bookNum: 1,
+        workId: testWorkIds[0]
+      },
+      {
+        id: testLineIds[4],
+        lineNum: 2,
+        lineText: "laudo tamen, vacuis quod sedem figere Cumis",
+        fifthFootSpondee: false,
+        scanPattern: "DDSS",
+        bookNum: 3,
+        workId: testWorkIds[1]
+      }
+    ]);
+  });
+
+  test("ok: empty list on nothing found", async function() {
+    let lines = await Line.findAll({minLineNum: 47});
+    expect(lines).toEqual([]);
+  });
+
+  test("bad request: minLineNum > maxLineNum", async function() {
+    try {
+      await Line.findAll({minLineNum: 3, maxLineNum: 1});
+      fail();
+    } catch(e) {
+      expect(e instanceof BadRequestError).toBeTruthy();
+    }
+  });
+
+  test("bad request: minBookNum > maxBookNum", async function() {
+    try {
+      await Line.findAll({minBookNum: 5, maxBookNum: 2});
+      fail();
+    } catch(e) {
+      expect(e instanceof BadRequestError).toBeTruthy();
+    }
+  });
+});

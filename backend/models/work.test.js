@@ -62,7 +62,6 @@ describe("create", function() {
 /************************************** findAll */
 
 describe("findAll", function() {
-  // test works: all
   test("works: all", async function() {
     let works = await Work.findAll();
     expect(works).toEqual([
@@ -310,7 +309,7 @@ describe("get", function() {
       ]
     });
   });
-// works: by bookNum
+
   test("works: by bookNum", async function() {
     let work = await Work.get(testWorkIds[0], {bookNum: 1});
     expect(work).toEqual({
@@ -376,7 +375,7 @@ describe("get", function() {
       ]
     });
   });
-// works: by lineText
+
   test("works: by lineText (full word)", async function() {
     let work = await Work.get(testWorkIds[0], {lineText: "Maecenas"});
     expect(work).toEqual({
