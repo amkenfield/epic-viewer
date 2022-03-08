@@ -130,29 +130,60 @@ class Line {
     return linesRes.rows;
   }
   
-//   static async get(id) {
-//     // the way this is written, it gets the whole line text - 
-//     // REWRITE so that it's getting the individual words, joined by spaces
-//     const lineRes = await db.query(
-//       `SELECT l.id,
-//               l.line_num AS "lineNum",
-//               l.line_text AS "lineText",
-//               sp.pattern AS "scanPattern",
-//               l.fifth_foot_spondee AS "fifthFootSpondee",
-//               l.book_num AS "bookNum",
-//               l.work_id AS "workId"
-//        FROM lines AS l
-//        LEFT JOIN scansionPatterns AS sp ON sp.id = l.scan_pattern_id
-//        WHERE id = $1`,
-//        [id]
-//     );
+  /** Given a line id, return data about line.
+   * 
+   *  Returns { id, lineNum, lineText, scanPattern, fifthFootSpondee,
+   *            bookNum, workId, words }
+   *            where words is [{ id, word, lemmaId, langCode, partOfSpeech }, ...]
+   *    NB - "words" not necessary/functional for initial version of app;
+   *            it is built out here in order that it may be built upon
+   *                in further development ( such as kennings, headwords searches - see db schema)
+   * 
+   *  Throws NotFoundError if not found.
+   */
 
-//     const line = lineRes.rows[0];
+  static async get(id) {
 
-//     if (!line) throw new NotFoundError(`No line with id: ${id}`);
+    const lineRes = await db.query(
+      `SELECT l.id,
+              l.line_num AS "lineNum",
+              l.line_text AS "lineText",
+              sp.pattern AS "scanPattern",
+              l.fifth_foot_spondee AS "fifthFootSpondee",
+              l.book_num AS "bookNum",
+              l.work_id AS "workId"
+       FROM lines AS l
+       LEFT JOIN scansionPatterns AS sp ON sp.id = l.scan_pattern_id
+       WHERE l.id = $1`,
+       [id]);
 
-//     return line;
-//   }
+    const line = lineRes.rows[0];
+
+    if (!line) throw new NotFoundError(`No line with id: ${id}`);
+
+    // The below is commented out b/c it's beyond the scope 
+    //  of the initial, more narrow development of the app;
+    //    however, the SQL is valid based on the current db schema,
+    //      and will allow for quick build-out when words/lemmae/headwords/kennings
+    //          and respective models/routes/search functionality are introduced
+    // *********************
+    // const wordsRes = await db.query(
+    //       `SELECT w.id, w.word, w.lang_code, p.part, le.lemma, le.dict_entry,
+    //               hw.headword, hw.dict_entry, lw.line_position
+    //        FROM words AS w
+    //        LEFT JOIN partsOfSpeech AS p ON p.id = w.part_id
+    //        LEFT JOIN lemmae AS le ON le.id = w.lemma_id
+    //        LEFT JOIN headwords AS hw ON hw.id = le.headword_id
+    //        LEFT JOIN linesWords AS lw ON lw.word_id = w.id
+    //        LEFT JOIN lines AS l ON l.id = lw.line_id
+    //        WHERE l.id = $1
+    //        ORDER BY lw.line_position`,
+    //       [id]);
+
+    // line.words = wordsRes.rows;
+    
+    return line;
+  }
 
 
 }

@@ -514,3 +514,29 @@ describe("findAll", function() {
     }
   });
 });
+
+/************************************** get */
+
+describe("get", function() {
+  test("ok", async function() {
+    let line = await Line.get(testLineIds[0]);
+    expect(line).toEqual({
+      id: testLineIds[0],
+      lineNum: 1,
+      lineText: "Qui fit, Maecenas, ut nemo, quam sibi sortem",
+      scanPattern: "SSSS",
+      fifthFootSpondee: false,
+      bookNum: 1,
+      workId: testWorkIds[0]
+    });
+  });
+
+  test("not found if no such line", async function() {
+    try {
+      await Line.get(0);
+      fail();
+    } catch(e) {
+      expect(e instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});
