@@ -210,7 +210,7 @@ class Work {
 
   /** Delete given work from database; returns undefined.
    * 
-   *  Throws NotFoundError if line not found
+   *  Throws NotFoundError if work not found
    */
  
   static async remove(id) {

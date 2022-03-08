@@ -229,6 +229,23 @@ class Line {
 
     return line;
   }
-}
+
+  /** Delete given line from database; returns undefined.
+   * 
+   *  Throws NotFoundError if line not found
+   */
+
+  static async remove(id) {
+    const result = await db.query(
+          `DELETE
+           FROM lines
+           WHERE id = $1
+           RETURNING id`,
+          [id]);
+    const line = result.rows[0];
+
+    if(!line) throw new NotFoundError(`No line with id: ${id}`);
+  };
+};
 
 module.exports = Line;

@@ -628,3 +628,23 @@ describe("update", function() {
     }
   });
 });
+
+/************************************** remove */
+
+describe("remove", function() {
+  test("ok", async function() {
+    await Line.remove(testLineIds[0]);
+    const res = await db.query(
+          `SELECT id FROM lines WHERE id = $1`, [testLineIds[0]]);
+          expect(res.rows.length).toEqual(0);
+  })
+
+  test("not found if no such line", async function() {
+    try {
+      await Line.remove(-1);
+      fail();
+    } catch(e) {
+      expect(e instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});
