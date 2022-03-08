@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://www.example.com/authorSearch.json",
+  "type": "object",
+  "properties": {
+    "shortName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 30
+    }
+  },
+  "additionalProperties": false,
+  "required": []
+}

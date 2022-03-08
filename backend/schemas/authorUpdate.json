@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://www.example.com/authorUpdate.json",
+  "type": "object",
+  "properties": {
+    "shortName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 30
+    },
+    "fullName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60
+    }
+  },
+  "additionalProperties": false,
+  "required": []
+}

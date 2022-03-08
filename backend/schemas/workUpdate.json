@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://www.example.com/workUpdate.json",
+  "type": "object",
+  "properties": {
+    "shortTitle": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60
+    },
+    "fullTitle": {
+      "type": "string"
+    },
+    "authorId": {
+      "type": "integer"
+    },
+    "langCode": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 3
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "shortTitle"
+  ]
+}

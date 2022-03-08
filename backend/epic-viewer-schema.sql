@@ -82,6 +82,8 @@ CREATE TABLE works (
   short_title VARCHAR(60) NOT NULL,
   full_title TEXT,
   -- should I ON DELETE CASCADE the two below?
+  -- furthermore, should the author_id be required?
+  -- that is, no work exists without a definite author?
   author_id INTEGER
     REFERENCES authors,
   lang_code VARCHAR(3)
@@ -103,7 +105,7 @@ CREATE TABLE lines (
     REFERENCES scansionPatterns,
   book_num INTEGER,
   work_id INTEGER NOT NULL
-    REFERENCES works
+    REFERENCES works ON DELETE CASCADE
 );
 
 -- Bridge Table for the M2M lines <-> words

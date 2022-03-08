@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://www.example.com/lineSearch.json",
+  "type": "object",
+  "properties": {
+    "minLineNum": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "maxLineNum": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "lineText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 75
+    },
+    "fifthFootSpondee": {
+      "type": "boolean"
+    },
+    "scanPattern": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 4
+    },
+    "minBookNum": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "maxBookNum": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "workId": {
+      "type": "integer"
+    }
+  },
+  "additionalProperties": false,
+  "required": []
+}
