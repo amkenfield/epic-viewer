@@ -185,7 +185,50 @@ class Line {
     return line;
   }
 
+  /** Update line data with 'data'
+   * 
+   *  This is a partial update - data may not contain all fields;
+   *  this only changes provided ones.
+   *  
+   *  Data can include: { lineNum, lineText, scanPatternId, 
+   *                      fifthFootSpondee, bookNum, workId }
+   * 
+   *  Returns { id, lineNum, lineText, scanPatternId, 
+   *            fifthFootSpondee, bookNum, workId }
+   * 
+   *  Throws NotFoundError if not found.
+   */
 
+  static async update(id, data) {
+    const {setCols, values} = sqlForPartialUpdate(
+      data,
+      {
+        lineNum: "line_num",
+        lineText: "line_text",
+        scanPatternId: "scan_pattern_id",
+        fifthFootSpondee: "fifth_foot_spondee",
+        bookNum: "book_num",
+        workId: "work_id"
+      });
+    const idVarIdx = "$" + (values.length + 1);
+
+    const querySql = `UPDATE lines
+                      SET ${setCols}
+                      WHERE id = ${idVarIdx}
+                      RETURNING id,
+                                line_num AS "lineNum",
+                                line_text AS "lineText",
+                                scan_pattern_id AS "scanPatternId",
+                                fifth_foot_spondee AS "fifthFootSpondee",
+                                book_num AS "bookNum",
+                                work_id AS "workId"`;
+    const result = await db.query(querySql, [...values, id]);
+    const line = result.rows[0];
+
+    if(!line) throw new NotFoundError(`No such line exists with id: ${id}`);
+
+    return line;
+  }
 }
 
 module.exports = Line;

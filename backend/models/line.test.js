@@ -540,3 +540,91 @@ describe("get", function() {
     }
   });
 });
+
+/************************************** update */
+
+describe("update", function() {
+  const updateData = {
+    lineNum: 312,
+    lineText: "flectere si nequeo superos, Acheronta movebo.",
+    fifthFootSpondee: false,
+    bookNum: 7
+  }
+
+  test("ok", async function() {
+    updateData.workId = testWorkIds[2];
+    updateData.scanPatternId = testScanPatternIds[0];
+    let line = await Line.update(testLineIds[0], updateData);
+    expect(line).toEqual({
+      id: testLineIds[0],
+      ...updateData
+    });
+
+    const result = await db.query(
+          `SELECT id, line_num, line_text, scan_pattern_id,
+                  fifth_foot_spondee, book_num, work_id
+           FROM lines
+           WHERE id = $1`,
+          [testLineIds[0]]);
+    expect(result.rows).toEqual([{
+      id: testLineIds[0],
+      line_num: 312,
+      line_text: "flectere si nequeo superos, Acheronta movebo.",
+      scan_pattern_id: testScanPatternIds[0],
+      fifth_foot_spondee: false,
+      book_num: 7,
+      work_id: testWorkIds[2]
+    }]);
+  });
+
+  test("ok: null fields", async function() {
+    const updateDataSetNulls = {
+      lineNum: 312,
+      lineText: "flectere si nequeo superos, Acheronta movebo.",
+      scanPatternId: testScanPatternIds[0],
+      bookNum: null
+    };
+
+    let line = await Line.update(testLineIds[0], updateDataSetNulls);
+    expect(line).toEqual({
+      id: testLineIds[0],
+      fifthFootSpondee: false,
+      workId: testWorkIds[0],
+      ...updateDataSetNulls
+    });
+
+    const result = await db.query(
+      `SELECT id, line_num, line_text, scan_pattern_id,
+              fifth_foot_spondee, book_num, work_id
+       FROM lines
+       WHERE id = $1`,
+      [testLineIds[0]]);
+    expect(result.rows).toEqual([{
+      id: testLineIds[0],
+      line_num: 312,
+      line_text: "flectere si nequeo superos, Acheronta movebo.",
+      scan_pattern_id: testScanPatternIds[0],
+      fifth_foot_spondee: false,
+      book_num: null,
+      work_id: testWorkIds[0]
+    }]);
+  });
+
+  test("not found if no such work", async function() {
+    try {
+      await Line.update(-1, updateData);
+      fail();
+    } catch(e) {
+      expect(e instanceof NotFoundError).toBeTruthy();
+    }
+  });
+
+  test("bad request w/no data", async function() {
+    try {
+      await Line.update(testLineIds[0], {});
+      fail();
+    } catch(e) {
+      expect(e instanceof BadRequestError).toBeTruthy();
+    }
+  });
+});

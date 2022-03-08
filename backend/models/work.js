@@ -207,6 +207,11 @@ class Work {
 
     return work;
   }
+
+  /** Delete given work from database; returns undefined.
+   * 
+   *  Throws NotFoundError if line not found
+   */
  
   static async remove(id) {
     const result = await db.query(
