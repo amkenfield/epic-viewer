@@ -208,7 +208,7 @@ describe("get", function() {
           lineNum: 1,
           lineText: 'Qui fit, Maecenas, ut nemo, quam sibi sortem',
           fifthFootSpondee: false,
-          scanPatternId: testScanPatternIds[15],
+          scanPattern: "SSSS",
           bookNum: 1
         },
         {
@@ -216,7 +216,7 @@ describe("get", function() {
           lineNum: 2,
           lineText: 'seu ratio dederit seu fors obiecerit, illa',
           fifthFootSpondee: false,
-          scanPatternId: testScanPatternIds[3],
+          scanPattern: "DDSS",
           bookNum: 1
         },
         {
@@ -224,7 +224,7 @@ describe("get", function() {
           lineNum: 3,
           lineText: 'contentus vivat, laudet diversa sequentes?',
           fifthFootSpondee: false,
-          scanPatternId: testScanPatternIds[15],
+          scanPattern: "SSSS",
           bookNum: 1
         }
       ]
@@ -245,7 +245,7 @@ describe("get", function() {
           lineNum: 2,
           lineText: 'seu ratio dederit seu fors obiecerit, illa',
           fifthFootSpondee: false,
-          scanPatternId: testScanPatternIds[3],
+          scanPattern: "DDSS",
           bookNum: 1
         },
         {
@@ -253,7 +253,7 @@ describe("get", function() {
           lineNum: 3,
           lineText: 'contentus vivat, laudet diversa sequentes?',
           fifthFootSpondee: false,
-          scanPatternId: testScanPatternIds[15],
+          scanPattern: "SSSS",
           bookNum: 1
         }
       ]
@@ -274,7 +274,7 @@ describe("get", function() {
           lineNum: 1,
           lineText: 'Qui fit, Maecenas, ut nemo, quam sibi sortem',
           fifthFootSpondee: false,
-          scanPatternId: testScanPatternIds[15],
+          scanPattern: "SSSS",
           bookNum: 1
         },
         {
@@ -282,7 +282,7 @@ describe("get", function() {
           lineNum: 2,
           lineText: 'seu ratio dederit seu fors obiecerit, illa',
           fifthFootSpondee: false,
-          scanPatternId: testScanPatternIds[3],
+          scanPattern: "DDSS",
           bookNum: 1
         }
       ]
@@ -303,7 +303,7 @@ describe("get", function() {
           lineNum: 2,
           lineText: 'seu ratio dederit seu fors obiecerit, illa',
           fifthFootSpondee: false,
-          scanPatternId: testScanPatternIds[3],
+          scanPattern: "DDSS",
           bookNum: 1
         }
       ]
@@ -324,7 +324,7 @@ describe("get", function() {
           lineNum: 1,
           lineText: 'Qui fit, Maecenas, ut nemo, quam sibi sortem',
           fifthFootSpondee: false,
-          scanPatternId: testScanPatternIds[15],
+          scanPattern: "SSSS",
           bookNum: 1
         },
         {
@@ -332,7 +332,7 @@ describe("get", function() {
           lineNum: 2,
           lineText: 'seu ratio dederit seu fors obiecerit, illa',
           fifthFootSpondee: false,
-          scanPatternId: testScanPatternIds[3],
+          scanPattern: "DDSS",
           bookNum: 1
         },
         {
@@ -340,7 +340,7 @@ describe("get", function() {
           lineNum: 3,
           lineText: 'contentus vivat, laudet diversa sequentes?',
           fifthFootSpondee: false,
-          scanPatternId: testScanPatternIds[15],
+          scanPattern: "SSSS",
           bookNum: 1
         }
       ]
@@ -348,7 +348,7 @@ describe("get", function() {
   })
 
   test("works: by scanPattern", async function() {
-    let work = await Work.get(testWorkIds[0], {scanPatternId: testScanPatternIds[15]});
+    let work = await Work.get(testWorkIds[0], {scanPattern: "SSSS"});
     expect(work).toEqual({
       id: testWorkIds[0],
       shortTitle: 'Primum',
@@ -361,7 +361,7 @@ describe("get", function() {
           lineNum: 1,
           lineText: 'Qui fit, Maecenas, ut nemo, quam sibi sortem',
           fifthFootSpondee: false,
-          scanPatternId: testScanPatternIds[15],
+          scanPattern: "SSSS",
           bookNum: 1
         },
         {
@@ -369,7 +369,7 @@ describe("get", function() {
           lineNum: 3,
           lineText: 'contentus vivat, laudet diversa sequentes?',
           fifthFootSpondee: false,
-          scanPatternId: testScanPatternIds[15],
+          scanPattern: "SSSS",
           bookNum: 1
         }
       ]
@@ -390,7 +390,7 @@ describe("get", function() {
           lineNum: 1,
           lineText: 'Qui fit, Maecenas, ut nemo, quam sibi sortem',
           fifthFootSpondee: false,
-          scanPatternId: testScanPatternIds[15],
+          scanPattern: "SSSS",
           bookNum: 1
         }
       ]
@@ -411,7 +411,7 @@ describe("get", function() {
           lineNum: 3,
           lineText: 'contentus vivat, laudet diversa sequentes?',
           fifthFootSpondee: false,
-          scanPatternId: testScanPatternIds[15],
+          scanPattern: "SSSS",
           bookNum: 1
         }
       ]

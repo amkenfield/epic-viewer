@@ -122,43 +122,44 @@ class Work {
 
     if(!work) throw new NotFoundError(`No work with id: ${id}`);
 
-    let linesQuery =  `SELECT id,
-                              line_num AS "lineNum",
-                              line_text AS "lineText",
-                              fifth_foot_spondee AS "fifthFootSpondee",
-                              scan_pattern_id AS "scanPatternId",
-                              book_num AS "bookNum"
-                       FROM lines`;
+    let linesQuery =  `SELECT l.id,
+                              l.line_num AS "lineNum",
+                              l.line_text AS "lineText",
+                              l.fifth_foot_spondee AS "fifthFootSpondee",
+                              sp.pattern AS "scanPattern",
+                              l.book_num AS "bookNum"
+                       FROM lines AS l
+                       LEFT JOIN scansionPatterns AS sp ON sp.id = l.scan_pattern_id`;
     let linesWhereExpressions = [`work_id = $1`];
     let linesQueryValues = [id];
 
-    const {startLine, endLine, bookNum, scanPatternId, lineText} = searchFilters;
+    const {startLine, endLine, bookNum, scanPattern, lineText} = searchFilters;
 
     if(startLine > endLine) throw new BadRequestError("Starting line cannot be greater than ending line.");
 
     if(startLine !== undefined) {
       linesQueryValues.push(startLine);
-      linesWhereExpressions.push(`line_num >= $${linesQueryValues.length}`);
+      linesWhereExpressions.push(`l.line_num >= $${linesQueryValues.length}`);
     }
 
     if(endLine !== undefined) {
       linesQueryValues.push(endLine);
-      linesWhereExpressions.push(`line_num <= $${linesQueryValues.length}`);
+      linesWhereExpressions.push(`l.line_num <= $${linesQueryValues.length}`);
     }
 
     if(bookNum) {
       linesQueryValues.push(bookNum);
-      linesWhereExpressions.push(`book_num = $${linesQueryValues.length}`);
+      linesWhereExpressions.push(`l.book_num = $${linesQueryValues.length}`);
     }
 
-    if(scanPatternId) {
-      linesQueryValues.push(scanPatternId);
-      linesWhereExpressions.push(`scan_pattern_id = $${linesQueryValues.length}`);
+    if(scanPattern) {
+      linesQueryValues.push(scanPattern);
+      linesWhereExpressions.push(`sp.pattern ILIKE $${linesQueryValues.length}`);
     }
 
     if(lineText) {
       linesQueryValues.push(`%${lineText}%`);
-      linesWhereExpressions.push(`line_text ILIKE $${linesQueryValues.length}`);
+      linesWhereExpressions.push(`l.line_text ILIKE $${linesQueryValues.length}`);
     }
 
     linesQuery += " WHERE " + linesWhereExpressions.join(" AND ");
