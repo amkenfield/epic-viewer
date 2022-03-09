@@ -527,7 +527,8 @@ describe("get", function() {
       scanPattern: "SSSS",
       fifthFootSpondee: false,
       bookNum: 1,
-      workId: testWorkIds[0]
+      workId: testWorkIds[0],
+      words: []
     });
   });
 

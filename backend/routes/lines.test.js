@@ -215,3 +215,138 @@ describe("GET /lines", function() {
     expect(resp.statusCode).toEqual(400);
   });
 });
+
+/************************************** GET /lines/:id */
+
+describe("GET /lines/:id", function() {
+// NB - words will be [] until Line model implementation completed
+// test - ok for anon: line w/words
+
+  test("ok for anon: line w/o words", async function() {
+    const resp = await request(app).get(`/lines/${testLineIds[0]}`);
+    expect(resp.body).toEqual({
+      line: {
+        id: testLineIds[0],
+        lineNum: 1,
+        lineText: "Qui fit, Maecenas, ut nemo, quam sibi sortem",
+        fifthFootSpondee: false,
+        scanPattern: "SSSS",
+        bookNum: 1,
+        workId: testWorkIds[0],
+        words: []
+      }
+    });
+  });
+
+  test("not found for no such line", async function() {
+    const resp = await request(app).get(`/lines/0`);
+    expect(resp.statusCode).toEqual(404);
+  });
+});
+
+/************************************** PATCH /lines/:id */
+
+describe("PATCH /lines/:id", function() {
+  test("ok for admin", async function() {
+    const resp = await request(app)
+          .patch(`/lines/${testLineIds[0]}`)
+          .send({
+            lineNum: 47,
+            lineText: "Romani ite domum",
+            bookNum: 12,
+            workId: testWorkIds[2]
+          })
+          .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.body).toEqual({
+      line: {
+        id: testLineIds[0],
+        lineNum: 47,
+        lineText: "Romani ite domum",
+        fifthFootSpondee: false,
+        scanPatternId: testScanPatternIds[15],
+        bookNum: 12,
+        workId: testWorkIds[2]
+      }
+    });
+  });
+
+  test("unauth for non-admin", async function() {
+    const resp = await request(app)
+          .patch(`/lines/${testLineIds[0]}`)
+          .send({
+            lineText: "Romani ite domum"
+          })
+          .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(401);
+  });
+
+  test("unauth for anon", async function() {
+    const resp = await request(app)
+          .patch(`/lines/${testLineIds[0]}`)
+          .send({
+            lineText: "Romani ite domum"
+          });
+    expect(resp.statusCode).toEqual(401);
+  });
+
+  test("not found on no such line", async function() {
+    const resp = await request(app)
+          .patch(`/lines/0`)
+          .send({
+            lineText: "Romani ite domum"
+          })
+          .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.statusCode).toEqual(404);
+  });
+
+  test("bad request on id change attempt", async function() {
+    const resp = await request(app)
+          .patch(`/lines/${testLineIds[0]}`)
+          .send({
+            id: 12345
+          })
+          .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.statusCode).toEqual(400);
+  });
+
+  test("bad request on invalid data", async function() {
+    const resp = await request(app)
+          .patch(`/lines/${testLineIds[0]}`)
+          .send({
+            lineText: 12345
+          })
+          .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.statusCode).toEqual(400);
+  });
+});
+
+/************************************** DELETE /lines/:id */
+
+describe("DELETE /lines:id", function() {
+  test("works for admin", async function() {
+    const resp = await request(app)
+          .delete(`/lines/${testLineIds[0]}`)
+          .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.body).toEqual({deleted: testLineIds[0].toString()});
+  });
+
+  test("unauth for non-admin", async function() {
+    const resp = await request(app)
+          .delete(`/lines/${testLineIds[0]}`)
+          .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(401);
+  });
+
+  test("unauth for anon", async function() {
+    const resp = await request(app)
+          .delete(`/lines/${testLineIds[0]}`);
+    expect(resp.statusCode).toEqual(401);
+  });
+
+  test("not found for no such work", async function() {
+    const resp = await request(app)
+          .delete(`/lines/0`)
+          .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.statusCode).toEqual(404);
+  });
+});

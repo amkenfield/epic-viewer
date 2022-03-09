@@ -73,7 +73,6 @@ router.get("/", async function(req, res, next) {
  *  Returns { id, shortTitle, fullTitle, authorId, langCode, lines }
  *      where lines is [{ id, lineNum, lineText, fifthFootSpondee,
  *                       scanPatternId, bookNum }, ...]
- *  (ATM, lines will be empty array; that'll wait for full Line/Lines implementation)
  * 
  *  Authorization required: none
  */
@@ -95,7 +94,7 @@ router.get("/:id", async function(req, res, next) {
  * 
  * Returns { id, shortTitle, fullTitle, langCode, authorId }
  * 
- * Authorization required: none
+ * Authorization required: admin
  */
 
 router.patch("/:id", ensureAdmin, async function(req, res, next) {

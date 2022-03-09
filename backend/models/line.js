@@ -181,6 +181,7 @@ class Line {
     //       [id]);
 
     // line.words = wordsRes.rows;
+    line.words = [];
     
     return line;
   }

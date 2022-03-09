@@ -160,7 +160,7 @@ describe("GET /works", function() {
 /************************************** GET /authors/:id */
 
 describe("GET /works/:id", function() {
-  // NB - lines will be [] until Line model implementation completed
+
   test("ok for anon: work w/lines", async function() {
     const resp = await request(app).get(`/works/${testWorkIds[0]}`);
     expect(resp.body).toEqual({
@@ -217,7 +217,7 @@ describe("GET /works/:id", function() {
   test("not found for no such work", async function() {
     const resp = await request(app).get(`/works/0`);
     expect(resp.statusCode).toEqual(404);
-  })
+  });
 });
 
 /************************************** PATCH /works/:id */

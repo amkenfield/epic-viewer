@@ -10,6 +10,7 @@ const Line = require('../models/line');
 const lineNewSchema = require('../schemas/lineNew.json');
 const lineUpdateSchema = require('../schemas/lineUpdate.json');
 const lineSearchSchema = require('../schemas/lineSearch.json');
+const { json } = require('body-parser');
 
 const router = new express.Router();
 
@@ -74,6 +75,68 @@ router.get('/', async function(req, res, next) {
 
     const lines = await Line.findAll(q);
     return res.json({lines});
+  } catch(e) {
+    return next(e);
+  }
+});
+
+/** GET /[id] => { line }
+ * 
+ *  Returns { id, lineNum, lineText, scanPattern,
+ *            fifthFootSpondee, bookNum, workId, words }
+ *       where words is [{word, langCode, partOfSpeech, lemma, lemmaDictEntry,
+ *                        headword, hwDictEntry, linePosition}, ...]
+ *  (ATM, words will be empty array; that will wait for further development/implementation)
+ *
+ *  Authorization required: none 
+ */
+
+router.get("/:id", async function(req, res, next) {
+  try {
+    const line = await Line.get(req.params.id);
+    return res.json({line})
+  } catch(e) {
+    return next(e);
+  }
+});
+
+/** PATCH /[id] { fld1, fld2, ... } => { line }
+ * 
+ * Patches line data.
+ * 
+ * Fields can be: { lineNum, lineText, scanPatternId, 
+ *                  fifthFootSpondee, bookNum, workId }
+ * 
+ * Returns { id, lineNum, lineText, scanPatternId,
+ *           fifthFootSpondee, bookNum, workId }
+ * 
+ * Authorization required: admin
+ */
+
+router.patch("/:id", ensureAdmin, async function(req, res, next) {
+  try {
+    const validator = jsonschema.validate(req.body, lineUpdateSchema);
+    if(!validator.valid) {
+      const errs = validator.errors.map(e => e.stack);
+      throw new BadRequestError(errs);
+    }
+
+    const line = await Line.update(req.params.id, req.body);
+    return res.json({line});
+  } catch(e) {
+    return next(e);
+  }
+});
+
+/** DELETE /[id] => { deleted: id }
+ * 
+ *  Authorization required: admin
+ */
+
+router.delete("/:id", ensureAdmin, async function(req, res, next) {
+  try {
+    await Line.remove(req.params.id);
+    return res.json({ deleted: req.params.id })
   } catch(e) {
     return next(e);
   }
