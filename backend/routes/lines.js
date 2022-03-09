@@ -39,4 +39,44 @@ router.post("/", ensureAdmin, async function(req, res, next) {
   }
 });
 
+/** GET / => 
+ *    { lines: [{id, lineNum, lineText, scanPattern, 
+ *              fifthFootSpondee, bookNum, workId}, ...] }
+ * 
+ *  Can filter on provided search filters:
+ *    - minLineNum
+ *    - maxLineNum
+ *    - lineText
+ *    - scanPattern
+ *    - fifthFootSpondee
+ *    - minBookNum
+ *    - maxBookNum
+ *    - workId
+ * 
+ *  Authorization required: none
+ */
+
+router.get('/', async function(req, res, next) {
+  const q = req.query;
+  if(q.minLineNum !== undefined) q.minLineNum = +q.minLineNum;
+  if(q.maxLineNum !== undefined) q.maxLineNum = +q.maxLineNum;
+  if(q.minBookNum !== undefined) q.minBookNum = +q.minBookNum;
+  if(q.maxBookNum !== undefined) q.maxBookNum = +q.maxBookNum;
+  if(q.workId !== undefined) q.workId = +q.workId;
+  if(q.fifthFootSpondee !== undefined) q.fifthFootSpondee = JSON.parse(q.fifthFootSpondee);
+
+  try {
+    const validator = jsonschema.validate(q, lineSearchSchema);
+    if(!validator.valid) {
+      const errs = validator.errors.map(e => e.stack);
+      throw new BadRequestError(errs);
+    }
+
+    const lines = await Line.findAll(q);
+    return res.json({lines});
+  } catch(e) {
+    return next(e);
+  }
+});
+
 module.exports = router;

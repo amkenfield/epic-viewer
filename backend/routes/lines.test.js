@@ -70,7 +70,7 @@ describe("POST /lines", function() {
           .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(400);
   })
-  // bad request w/ invalid data
+
   test("bad request w/invalid data", async function() {
     const resp = await request(app)
           .post("/lines")
@@ -83,6 +83,135 @@ describe("POST /lines", function() {
             workId: testWorkIds[2]
           })
           .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.statusCode).toEqual(400);
+  });
+});
+
+/************************************** GET /lines */
+
+describe("GET /lines", function() {
+  test("ok for anon", async function() {
+    const resp = await request(app).get("/lines");
+    expect(resp.body).toEqual({
+      lines: [
+        {
+          id: testLineIds[0],
+          lineNum: 1,
+          lineText: "Qui fit, Maecenas, ut nemo, quam sibi sortem",
+          fifthFootSpondee: false,
+          scanPattern: "SSSS",
+          bookNum: 1,
+          workId: testWorkIds[0]
+        },
+        {
+          id: testLineIds[1],
+          lineNum: 2,
+          lineText: "seu ratio dederit seu fors obiecerit, illa",
+          fifthFootSpondee: false,
+          scanPattern: "DDSS",
+          bookNum: 1,
+          workId: testWorkIds[0]
+        },
+        {
+          id: testLineIds[2],
+          lineNum: 3,
+          lineText: "contentus vivat, laudet diversa sequentes?",
+          fifthFootSpondee: false,
+          scanPattern: "SSSS",
+          bookNum: 1,
+          workId: testWorkIds[0]
+        },
+        {
+          id: testLineIds[3],
+          lineNum: 1,
+          lineText: "Quamvis digressu veteris confusus amici",
+          fifthFootSpondee: false,
+          scanPattern: "SSDS",
+          bookNum: 3,
+          workId: testWorkIds[1]
+        },
+        {
+          id: testLineIds[4],
+          lineNum: 2,
+          lineText: "laudo tamen, vacuis quod sedem figere Cumis",
+          fifthFootSpondee: false,
+          scanPattern: "DDSS",
+          bookNum: 3,
+          workId: testWorkIds[1]
+        },
+        {
+          id: testLineIds[5],
+          lineNum: 3,
+          lineText: "destinet atque unum civem donare Sibyllae",
+          fifthFootSpondee: false,
+          scanPattern: "DSSS",
+          bookNum: 3,
+          workId: testWorkIds[1]
+        }
+      ]
+    });
+  });
+
+  test("ok: filtering (single filter)", async function() {
+    const resp = await request(app)
+          .get("/lines")
+          .query({maxLineNum: 1});
+    expect(resp.body).toEqual({
+      lines: [
+        {
+          id: testLineIds[0],
+          lineNum: 1,
+          lineText: "Qui fit, Maecenas, ut nemo, quam sibi sortem",
+          fifthFootSpondee: false,
+          scanPattern: "SSSS",
+          bookNum: 1,
+          workId: testWorkIds[0]
+        },
+        {
+          id: testLineIds[3],
+          lineNum: 1,
+          lineText: "Quamvis digressu veteris confusus amici",
+          fifthFootSpondee: false,
+          scanPattern: "SSDS",
+          bookNum: 3,
+          workId: testWorkIds[1]
+        }
+      ]
+    });
+  });
+
+  test("ok: filtering (all filters)", async function() {
+    const resp = await request(app)
+          .get("/lines")
+          .query({
+            minLineNum: 2,
+            maxLineNum: 2,
+            lineText: "cuis",
+            scanPattern: "DDSS",
+            fifthFootSpondee: false,
+            minBookNum: 1,
+            maxBookNum: 3,
+            workId: testWorkIds[1]
+          });
+    expect(resp.body).toEqual({
+      lines: [
+        {
+          id: testLineIds[4],
+          lineNum: 2,
+          lineText: "laudo tamen, vacuis quod sedem figere Cumis",
+          fifthFootSpondee: false,
+          scanPattern: "DDSS",
+          bookNum: 3,
+          workId: testWorkIds[1]
+        }
+      ]
+    });
+  });
+
+  test("bad request if invalid filter key", async function() {
+    const resp = await request(app)
+          .get("/lines")
+          .query({favColor: "Tyrian Purple"});
     expect(resp.statusCode).toEqual(400);
   });
 });

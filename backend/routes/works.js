@@ -39,7 +39,7 @@ router.post("/", ensureAdmin, async function(req, res, next) {
 });
 
 /** GET / => 
- *    { works: [ { id, shortTitle, fullTitle, authorId, langCode }, ... ] }
+ *    { works: [ { id, shortTitle, fullTitle, authorId, langCode }, ...] }
  * 
  *  Can filter on provided search filters:
  *    - shortTitle (will find case-insensitive, partial matches)
