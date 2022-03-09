@@ -16,9 +16,7 @@
       "type": "boolean"
     },
     "scanPatternId": {
-      "type": "integer",
-      "minimum": 0,
-      "maximum": 15
+      "type": "integer"
     },
     "bookNum": {
       "type": "integer",

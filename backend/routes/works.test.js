@@ -11,6 +11,7 @@ const {
   commonAfterAll,
   testAuthorIds,
   testWorkIds,
+  testLineIds,
   u1Token,
   adminToken,
 } = require("./_testCommon");
@@ -64,7 +65,7 @@ describe("POST /works", function() {
           .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(400);
   });
-  // bad request w/invalid data
+
   test("bad request with invalid data", async function() {
     const resp = await request(app)
           .post("/works")
@@ -169,7 +170,32 @@ describe("GET /works/:id", function() {
         fullTitle: "Opus Primum De Anima",
         langCode: "LAT",
         authorId: testAuthorIds[0],
-        lines: []
+        lines: [
+          {
+            id: testLineIds[0],
+            lineNum: 1,
+            lineText: "Qui fit, Maecenas, ut nemo, quam sibi sortem",
+            scanPattern: "SSSS",
+            fifthFootSpondee: false,
+            bookNum: 1
+          },
+          {
+            id: testLineIds[1],
+            lineNum: 2,
+            lineText: "seu ratio dederit seu fors obiecerit, illa",
+            scanPattern: "DDSS",
+            fifthFootSpondee: false,
+            bookNum: 1
+          },
+          {
+            id: testLineIds[2],
+            lineNum: 3,
+            lineText: "contentus vivat, laudet diversa sequentes?",
+            scanPattern: "SSSS",
+            fifthFootSpondee: false,
+            bookNum: 1
+          }
+        ]
       }
     });
   });

@@ -4,21 +4,35 @@ const db = require("../db.js");
 const User = require("../models/user");
 const Author = require("../models/author");
 const Work = require('../models/work');
+const Line = require('../models/line');
 const { createToken } = require("../helpers/tokens");
 
 const testAuthorIds = [];
 const testWorkIds = [];
+const testLineIds = [];
+const testScanPatternIds = [];
 
 async function commonBeforeAll() {
   
+  await db.query("DELETE FROM lines")
   await db.query("DELETE FROM works");
   await db.query("DELETE FROM languages");
   await db.query("DELETE FROM authors");
+  await db.query("DELETE FROM scansionPatterns");
   await db.query("DELETE FROM users");
 
   await db.query(`
     INSERT INTO languages (name, lang_code)
     VALUES ('Latin', 'LAT')`);
+
+  const resultsScanPatterns = await db.query(`
+    INSERT INTO scansionPatterns (pattern)
+    VALUES ('DDDD'), ('DDDS'), ('DDSD'), ('DDSS'),
+           ('DSDD'), ('DSDS'), ('DSSD'), ('DSSS'),
+           ('SDDD'), ('SDDS'), ('SDSD'), ('SDSS'),
+           ('SSDD'), ('SSDS'), ('SSSD'), ('SSSS')
+    RETURNING id`);
+  testScanPatternIds.splice(0,0, ...resultsScanPatterns.rows.map(p => p.id));
 
   testAuthorIds[0] = (await Author.create(
     {shortName: "Mendax", fullName: "Publius Flavius Mendax"})).id;
@@ -36,6 +50,31 @@ async function commonBeforeAll() {
   testWorkIds[2] = (await Work.create(
     {shortTitle: "Tertium", fullTitle: "Opus Tertium De Otio",
      authorId: testAuthorIds[1], langCode: "LAT"})).id;
+
+  testLineIds[0] = (await Line.create(
+    {lineNum: 1, lineText: "Qui fit, Maecenas, ut nemo, quam sibi sortem",
+     fifthFootSpondee: false, scanPatternId: testScanPatternIds[15],
+     bookNum: 1, workId: testWorkIds[0]})).id;
+  testLineIds[1] = (await Line.create(
+    {lineNum: 2, lineText: "seu ratio dederit seu fors obiecerit, illa",
+     fifthFootSpondee: false, scanPatternId: testScanPatternIds[3],
+     bookNum: 1, workId: testWorkIds[0]})).id;
+  testLineIds[2] = (await Line.create(
+    {lineNum: 3, lineText: "contentus vivat, laudet diversa sequentes?",
+     fifthFootSpondee: false, scanPatternId: testScanPatternIds[15],
+     bookNum: 1, workId: testWorkIds[0]})).id;
+  testLineIds[3] = (await Line.create(
+    {lineNum: 1, lineText: "Quamvis digressu veteris confusus amici",
+     fifthFootSpondee: false, scanPatternId: testScanPatternIds[13],
+     bookNum: 3, workId: testWorkIds[1]})).id;
+  testLineIds[4] = (await Line.create(
+    {lineNum: 2, lineText: "laudo tamen, vacuis quod sedem figere Cumis",
+     fifthFootSpondee: false, scanPatternId: testScanPatternIds[3],
+     bookNum: 3, workId: testWorkIds[1]})).id;
+  testLineIds[5] = (await Line.create(
+    {lineNum: 3, lineText: "destinet atque unum civem donare Sibyllae",
+     fifthFootSpondee: false, scanPatternId: testScanPatternIds[7],
+     bookNum: 3, workId: testWorkIds[1]})).id;
 
   await User.register({
     username: "u1",
@@ -90,5 +129,7 @@ module.exports = {
   u2Token,
   adminToken,
   testAuthorIds,
-  testWorkIds
+  testWorkIds,
+  testLineIds,
+  testScanPatternIds
 };

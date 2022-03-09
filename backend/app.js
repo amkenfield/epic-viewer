@@ -11,7 +11,7 @@ const authRoutes = require("./routes/auth");
 const usersRoutes = require("./routes/users");
 const authorsRoutes = require("./routes/authors");
 const worksRoutes = require("./routes/works");
-// const linesRoutes = require("./routes/lines")
+const linesRoutes = require("./routes/lines");
 
 const morgan = require("morgan");
 
@@ -24,9 +24,10 @@ app.use(authenticateJWT);
 
 app.use("/auth", authRoutes);
 app.use("/users", usersRoutes);
+app.use("/lines", linesRoutes);
 app.use("/authors", authorsRoutes);
 app.use("/works", worksRoutes);
-//app.use("/lines", linesRoutes);
+
 
 app.use(function(req, res, next) {
   return next(new NotFoundError());
