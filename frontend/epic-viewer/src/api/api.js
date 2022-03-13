@@ -39,15 +39,45 @@ class EpicViewerApi {
     return res.user;
   }
 
-  // getAuthors
-  // getAuthor
+  // getAuthors -- start w/this; once working, emulate for Works and Lines below
+
+  /** Get authors (filtered by name (NB-specifically, shortName) if not undefined) */
+
+  static async getAuthors(name) {
+    let res = await this.request(`authors`, { name });
+    return res.authors;
+  }
+ 
+  /** Get details on an author by id */
+
+  static async getAuthor(id) {
+    let res = await this.request(`authors/${id}`);
+    return res.author;
+  }
   // getWorks
   // getWork
   // getLines
   // getLine
-  // login
-  // signup
-  // saveProfile
+
+  /** Get token for login from username, password */
+  static async login(data) {
+    let res = await this.request(`auth/token`, data, "post");
+    return res.token;
+  }
+
+  /** Signup for site */
+
+  static async signup(data) {
+    let res = await this.request(`auth/register`, data, "post");
+    return res.token;
+  }
+
+  /** Save user profile page */
+
+  static async saveProfile(username, data) {
+    let res = await ths.request(`users/${username}`, data, "patch");
+    return res.user;
+  }
 
   // to be added at some point, whether inital or future development:
   // favoriteLine
