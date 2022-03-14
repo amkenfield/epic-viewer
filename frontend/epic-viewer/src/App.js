@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {BrowserRouter} from "react-router-dom";
 import useLocalStorage from './hooks/useLocalStorage';
+import Navigation from './routes-nav/Navigation';
 import LoadingSpinner from "./common/LoadingSpinner";
 import EpicViewerApi from "./api/api";
 import UserContext from './auth/UserContext';
@@ -77,6 +78,7 @@ function App() {
       <UserContext.Provider
           value={{ currentUser, setCurrentUser }}>
         <div className="App">
+          <Navigation logout={logout}/>
         </div>
       </UserContext.Provider>
     </BrowserRouter>
