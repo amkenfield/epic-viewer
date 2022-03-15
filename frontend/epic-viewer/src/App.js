@@ -1,7 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import {BrowserRouter} from "react-router-dom";
+import {BrowserRouter, Routes, Route} from "react-router-dom";
 import useLocalStorage from './hooks/useLocalStorage';
 import Navigation from './routes-nav/Navigation';
+import EVRoutes from './routes-nav/EVRoutes';
+import Homepage from './homepage/Homepage';
+import LoginForm from './auth/LoginForm';
 import LoadingSpinner from "./common/LoadingSpinner";
 import EpicViewerApi from "./api/api";
 import UserContext from './auth/UserContext';
@@ -71,6 +74,21 @@ function App() {
     }
   }
 
+  /** Handles site-wide login
+   * 
+   */
+
+  async function login(loginData) {
+    try {
+      let token = await EpicViewerApi.login(loginData);
+      setToken(token);
+      return { success: true };
+    } catch(e) {
+      console.error("login failed:", e);
+      return { success: false, e };
+    }
+  }
+
   if(!infoLoaded) return <LoadingSpinner />;
 
   return (
@@ -79,6 +97,11 @@ function App() {
           value={{ currentUser, setCurrentUser }}>
         <div className="App">
           <Navigation logout={logout}/>
+          {/* <EVRoutes login={login} signup={signup} /> */}
+          <Routes>
+            <Route path="/" element={<Homepage />} />
+            <Route path='/login' element={<LoginForm login={login}/>} />
+          </Routes>
         </div>
       </UserContext.Provider>
     </BrowserRouter>
