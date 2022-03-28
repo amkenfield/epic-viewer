@@ -1,14 +1,18 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import useLocalStorage from './hooks/useLocalStorage';
 import Navigation from './routes-nav/Navigation';
 import EVRoutes from './routes-nav/EVRoutes';
 import Homepage from './homepage/Homepage';
+import RequireAuth from './auth/RequireAuth';
 import LoginForm from './auth/LoginForm';
+import SignupForm from './auth/SignupForm';
 import LoadingSpinner from "./common/LoadingSpinner";
 import EpicViewerApi from "./api/api";
 import UserContext from './auth/UserContext';
 import jwt from 'jsonwebtoken';
+import AuthorList from './authors/AuthorList';
+import AuthorDetail from './authors/AuthorDetail';
 
 // Key name for storing token in localStorage for "remember me" re-login
 export const TOKEN_STORAGE_ID = "epic-viewer-token";
@@ -101,6 +105,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Homepage />} />
             <Route path='/login' element={<LoginForm login={login}/>} />
+            <Route path='/signup' element={<SignupForm signup={signup}/>} />
+            <Route path='/authors' element={<AuthorList />} />
+            <Route path='/authors/:id' element={<AuthorDetail />} />
           </Routes>
         </div>
       </UserContext.Provider>

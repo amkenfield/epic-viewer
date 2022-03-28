@@ -51,7 +51,6 @@ router.post("/", ensureAdmin, async function(req, res, next) {
  */
 
 router.get("/", async function(req, res, next) {
-  console.log("req query: ", req.query);
   const q = req.query;
   try {
     const validator = jsonschema.validate(q, authorSearchSchema);

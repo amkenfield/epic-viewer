@@ -17,7 +17,7 @@ function Homepage() {
 
   return (
     <div className="Homepage">
-      <div className="conatiner text-center">
+      <div className="container text-center">
         <h1 className="mb-4 font-weight-bold">Epic Viewer</h1>
         <p className="lead">Motto/Slogan TBD</p>
         {currentUser

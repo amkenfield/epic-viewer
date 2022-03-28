@@ -24,6 +24,7 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alpheios-components@latest/dist/style/style-components.min.css"/>
     <title>React App</title>
   </head>
   <body>
@@ -39,5 +40,21 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script type="text/javascript">
+      document.addEventListener("DOMContentLoaded", function(event) {
+        import ("https://cdn.jsdelivr.net/npm/alpheios-embedded@latest/dist/alpheios-embedded.min.js").then(embedLib => {
+          window.AlpheiosEmbed.importDependencies({
+            mode: 'cdn'
+          }).then(Embedded => {
+            new Embedded({clientId: "EpicViewerAK"}).activate();
+          }).catch(e => {
+            console.error(`Import of Alpheios embedded library dependencies failed: ${e}`)
+          })
+  
+        }).catch(e => {
+          console.error(`Import of Alpheios Embedded library failed: ${e}`)
+        })
+      });
+  </script>
   </body>
 </html>
