@@ -13,6 +13,9 @@ import UserContext from './auth/UserContext';
 import jwt from 'jsonwebtoken';
 import AuthorList from './authors/AuthorList';
 import AuthorDetail from './authors/AuthorDetail';
+import WorkList from './works/WorkList';
+import WorkDetail from './works/WorkDetail';
+import LineDetail from './lines/LineDetail';
 
 // Key name for storing token in localStorage for "remember me" re-login
 export const TOKEN_STORAGE_ID = "epic-viewer-token";
@@ -108,6 +111,9 @@ function App() {
             <Route path='/signup' element={<SignupForm signup={signup}/>} />
             <Route path='/authors' element={<AuthorList />} />
             <Route path='/authors/:id' element={<AuthorDetail />} />
+            <Route path='/works' element={<WorkList />} />
+            <Route path='/works/:id' element={<WorkDetail />} />
+            <Route path='/lines/:id' element={<LineDetail />} />
           </Routes>
         </div>
       </UserContext.Provider>

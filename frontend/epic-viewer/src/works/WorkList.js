@@ -23,6 +23,24 @@ function WorkList() {
     console.debug("WorkList useEffect getAllWorksOnMount");
     search();
   }, []);
+
+  // Not quite sure if I'm doing the search filters correctly here
+  async function search(data) {
+    let works = await EpicViewerApi.getWorks(data);
+    setWorks(works);
+  }
+
+  if(!works) return <LoadingSpinner />
+
+  return (
+    <div className='WorkList col-md-8 offset-md-2'>
+      <SearchForm searchFor={search}/>
+      {works.length
+        ? <WorkCardList works={works} />
+        : <p className='lead'>Sorry, no results were found!</p>
+      }
+    </div>
+  );
 }
 
 export default WorkList;
