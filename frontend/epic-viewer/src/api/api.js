@@ -39,8 +39,6 @@ class EpicViewerApi {
     return res.user;
   }
 
-  // getAuthors -- start w/this; once working, emulate for Works and Lines below
-
   /** Get authors (filtered by name (NB-specifically, shortName) if not undefined) */
 
   static async getAuthors(name) {
@@ -54,10 +52,34 @@ class EpicViewerApi {
     let res = await this.request(`authors/${id}`);
     return res.author;
   }
-  // getWorks
-  // getWork
-  // getLines
-  // getLine
+
+  /** Get works (with search filters if not undefined) */
+
+  static async getWorks(data) {
+    let res = await this.request(`works`, data);
+    return res.works;
+  }
+
+  /** Get details on a work by id */
+
+  static async getWork(id) {
+    let res = await this.request(`works/${id}`);
+    return res.work;
+  }
+
+  /** Get lines (with search filters if not undefined) */
+
+  static async getLines(data) {
+    let res = await this.request(`lines`, data);
+    return res.lines;
+  }
+
+  /** Get details on a line by id */
+
+  static async getLine(id) {
+    let res = await this.request(`lines/${id}`);
+    return res.line;
+  }
 
   /** Get token for login from username, password */
   static async login(data) {
