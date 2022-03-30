@@ -24,8 +24,8 @@ function AuthorList() {
     search();
   }, []);
 
-  async function search(name) {
-    let authors = await EpicViewerApi.getAuthors(name);
+  async function search(shortName) {
+    let authors = await EpicViewerApi.getAuthors(shortName);
     setAuthors(authors);
   }
 

@@ -30,9 +30,9 @@ function LineDetail() {
 
   console.log("FFS: ", line.fifthFootSpondee)
   return (
-    <div className="LineDetail col-md-8 offset-md-2">
+    <div className="LineDetail col-md-8 offset-md-2 alpheios-enabled">
       <p><small>{line.bookNum}.{line.lineNum}</small></p>
-      <h5>{line.lineText}</h5>
+      <h5 lang="lat">{line.lineText}</h5>
       <h6>{line.scanPattern}</h6>
       <p><small>{line.fifthFootSpondee.toString()}</small></p>
     </div>

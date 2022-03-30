@@ -16,6 +16,7 @@ import AuthorDetail from './authors/AuthorDetail';
 import WorkList from './works/WorkList';
 import WorkDetail from './works/WorkDetail';
 import LineDetail from './lines/LineDetail';
+import ProfileForm from './profiles/ProfileForm';
 
 // Key name for storing token in localStorage for "remember me" re-login
 export const TOKEN_STORAGE_ID = "epic-viewer-token";
@@ -104,11 +105,11 @@ function App() {
           value={{ currentUser, setCurrentUser }}>
         <div className="App">
           <Navigation logout={logout}/>
-          {/* <EVRoutes login={login} signup={signup} /> */}
           <Routes>
             <Route path="/" element={<Homepage />} />
             <Route path='/login' element={<LoginForm login={login}/>} />
             <Route path='/signup' element={<SignupForm signup={signup}/>} />
+            <Route path='/profile' element={<ProfileForm />} />
             <Route path='/authors' element={<AuthorList />} />
             <Route path='/authors/:id' element={<AuthorDetail />} />
             <Route path='/works' element={<WorkList />} />
