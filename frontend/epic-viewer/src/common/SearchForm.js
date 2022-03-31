@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-/** Search widtget.
+/** Search widget.
  * (NTS - also some practice/experience for further widget expansion)
  * 
  *  Appears on all resource Lists: AuthorList, WorkList, Linelist,

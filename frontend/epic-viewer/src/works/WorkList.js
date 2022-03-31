@@ -26,6 +26,7 @@ function WorkList() {
 
   // Not quite sure if I'm doing the search filters correctly here
   async function search(data) {
+    console.log("here be data: ", data)
     let works = await EpicViewerApi.getWorks(data);
     setWorks(works);
   }

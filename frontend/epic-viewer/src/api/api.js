@@ -41,8 +41,8 @@ class EpicViewerApi {
 
   /** Get authors (filtered by name (NB-specifically, shortName) if not undefined) */
 
-  static async getAuthors(name) {
-    let res = await this.request(`authors`, { name });
+  static async getAuthors(shortName) {
+    let res = await this.request(`authors`, { shortName });
     return res.authors;
   }
  
@@ -55,8 +55,8 @@ class EpicViewerApi {
 
   /** Get works (with search filters if not undefined) */
 
-  static async getWorks(data) {
-    let res = await this.request(`works`, data);
+  static async getWorks(shortTitle) {
+    let res = await this.request(`works`, {shortTitle});
     return res.works;
   }
 
