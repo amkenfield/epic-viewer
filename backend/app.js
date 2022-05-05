@@ -1,6 +1,7 @@
 "use strict";
 
 const express = require("express");
+const path = require("path");
 // refresher on what exactly this is...
 const cors = require("cors");
 
@@ -42,5 +43,8 @@ app.use(function(err, req, res, next) {
     error: {message, status}
   });
 });
+
+// not sure where this should go (if even works...)
+app.use(express.static(path.resolve(__dirname, "./frontend/epic-viewer/build")));
 
 module.exports = app;
